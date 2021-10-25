@@ -4,10 +4,10 @@ version = "0.0.0"
 description = "Maison"
 authors = ["Dom Batten <dominic.batten@googlemaill.com>"]
 license = "MIT"
-readme = "README.rst"
+readme = "README.md"
 homepage = "https://github.com/dbatten5/maison"
 repository = "https://github.com/dbatten5/maison"
-documentation = "https://maison.readthedocs.io"
+documentation = "https://dbatten5.github.io/maison"
 classifiers = [
     "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.6",
