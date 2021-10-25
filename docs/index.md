@@ -1,6 +1,6 @@
 [![Actions Status](https://github.com/dbatten5/maison/workflows/Tests/badge.svg)](https://github.com/dbatten5/maison/actions)
 [![Actions Status](https://github.com/dbatten5/maison/workflows/Release/badge.svg)](https://github.com/dbatten5/maison/actions)
-[![Coverage Status](https://coveralls.io/repos/github/dbatten5/maison/badge.svg?branch=master)](https://coveralls.io/github/dbatten5/maison?branch=main)
+[![codecov](https://codecov.io/gh/dbatten5/maison/branch/main/graph/badge.svg?token=948J8ECAQT)](https://codecov.io/gh/dbatten5/maison)
 
 When developing a `python` application, e.g a command-line tool, it can be
 helpful to allow the user to set their own configuration options to allow them
