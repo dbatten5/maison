@@ -812,6 +812,14 @@ doc = ["sphinx-rtd-theme", "sphinx-autodoc-typehints (>=1.2.0)"]
 test = ["pytest", "typing-extensions", "mypy"]
 
 [[package]]
+category = "dev"
+description = "Typing stubs for toml"
+name = "types-toml"
+optional = false
+python-versions = "*"
+version = "0.10.1"
+
+[[package]]
 category = "main"
 description = "Backported and Experimental Type Hints for Python 3.5+"
 name = "typing-extensions"
@@ -899,7 +907,7 @@ docs = ["sphinx", "jaraco.packaging (>=8.2)", "rst.linker (>=1.9)"]
 testing = ["pytest (>=4.6)", "pytest-checkdocs (>=2.4)", "pytest-flake8", "pytest-cov", "pytest-enabler (>=1.0.1)", "jaraco.itertools", "func-timeout", "pytest-black (>=0.3.7)", "pytest-mypy"]
 
 [metadata]
-content-hash = "40a5d06989015f4c3b99d71d427943eb2922e55fe661f70947061d45ebe2dde9"
+content-hash = "4dff7853f156825bae73d6ceca3284caa9eb02894e4b748b2cf00220f65a4e3e"
 lock-version = "1.0"
 python-versions = "^3.6.1"
 
@@ -1351,6 +1359,10 @@ typed-ast = [
 typeguard = [
     {file = "typeguard-2.13.0-py3-none-any.whl", hash = "sha256:0bc44d1ff865b522eda969627868b0e001c8329296ce50aededbea03febc79ee"},
     {file = "typeguard-2.13.0.tar.gz", hash = "sha256:04e38f92eb59410c9375d3be23df65e0a7643f2e8bcbd421423d808d2f9e99df"},
+]
+types-toml = [
+    {file = "types-toml-0.10.1.tar.gz", hash = "sha256:5c1f8f8d57692397c8f902bf6b4d913a0952235db7db17d2908cc110e70610cb"},
+    {file = "types_toml-0.10.1-py3-none-any.whl", hash = "sha256:8cdfd2b7c89bed703158b042dd5cf04255dae77096db66f4a12ca0a93ccb07a5"},
 ]
 typing-extensions = [
     {file = "typing_extensions-3.10.0.2-py2-none-any.whl", hash = "sha256:d8226d10bc02a29bcc81df19a26e56a9647f8b0a6d4a83924139f4a8b01f17b7"},
