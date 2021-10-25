@@ -2,7 +2,7 @@
   "_template": "gh:dbatten5/cookiecutter-hypermodern-python",
   "author": "Dom Batten",
   "development_status": "Development Status :: 3 - Alpha",
-  "email": "dominic.batten@googlemaill.com",
+  "email": "dominic.batten@googlemail.com",
   "friendly_name": "Maison",
   "github_user": "dbatten5",
   "license": "MIT",
