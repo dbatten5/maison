@@ -2,7 +2,7 @@
 name = "maison"
 version = "0.1.0"
 description = "Maison"
-authors = ["Dom Batten <dominic.batten@googlemaill.com>"]
+authors = ["Dom Batten <dominic.batten@googlemail.com>"]
 license = "MIT"
 readme = "README.md"
 homepage = "https://github.com/dbatten5/maison"
@@ -64,6 +64,9 @@ pretty = true
 show_column_numbers = true
 show_error_codes = true
 show_error_context = true
+
+[tool.isort]
+profile = "open_stack"
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]

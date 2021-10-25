@@ -14,6 +14,7 @@ theme:
 nav:
   - Maison: index.md
   - Reference: reference.md
+  - Contributing: contributing.md
 
 plugins:
   - search
