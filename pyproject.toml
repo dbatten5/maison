@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "maison"
-version = "0.0.0"
+version = "0.1.0"
 description = "Maison"
 authors = ["Dom Batten <dominic.batten@googlemaill.com>"]
 license = "MIT"
