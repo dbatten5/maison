@@ -1,4 +1,4 @@
-::: maison.config
+::: maison.config.ProjectConfig
     selection:
       filters:
         - "!^__"
