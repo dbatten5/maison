@@ -17,15 +17,36 @@ the root of a project directory that uses the tool, for example in a
 `maison` aims to provide a simple and flexible way to read and validate those
 configuration options so that they may be used in the application.
 
-## Help
-
-See the [documentation](https://dbatten5.github.io/maison) for more details.
-
 ## Installation
 
 ```bash
 pip install maison
 ```
+
+## Usage
+
+Suppose the following `pyproject.toml` lives somewhere in a project directory:
+
+```toml
+[tool.acme]
+new_lines = true
+```
+
+`maison` exposes a `ProjectConfig` class to retrieve values from config files
+like so:
+
+```python
+from maison import ProjectConfig
+
+config = ProjectConfig(project_name="acme")
+
+if config.get_option("new_lines"):
+    # make sure to add new lines
+```
+
+## Help
+
+See the [documentation](https://dbatten5.github.io/maison) for more details.
 
 ## Licence
 
