@@ -8,7 +8,49 @@ from maison.config import ProjectConfig
 
 
 class TestProjectConfig:
-    """Tests for the `ProjectConfig`."""
+    """Tests for the `ProjectConfig` class."""
+
+    def test_repr(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given an instance of `ProjectConfig`,
+        When the string representation is retrieved,
+        Then a useful representation is returned
+        """
+        pyproject_path = create_tmp_file(filename="pyproject.toml")
+
+        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
+
+        assert str(config) == f"ProjectConfig (config_path={pyproject_path})"
+
+    def test_repr_no_config_path(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given an instance of `ProjectConfig` without a `config_path`,
+        When the string representation is retrieved,
+        Then a useful representation is returned
+        """
+        pyproject_path = create_tmp_file()
+
+        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
+
+        assert str(config) == "ProjectConfig (config_path=None)"
+
+    def test_to_dict(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given an instance of `ProjectConfig`,
+        When the `to_dict` method is invoked,
+        Then a dictionary of all config options is returned
+        """
+        config_dict = {"tool": {"foo": {"bar": "baz"}}}
+        config_toml = toml.dumps(config_dict)
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+
+        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
+
+        assert config.to_dict() == config_dict["tool"]["foo"]
+
+
+class TestGetOption:
+    """Tests for the `get_option` method."""
 
     def test_valid_pyproject(self, create_tmp_file: Callable[..., Path]) -> None:
         """
@@ -18,11 +60,9 @@ class TestProjectConfig:
         """
         config_toml = toml.dumps({"tool": {"foo": {"bar": "baz"}}})
         pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
-        autoimport_config = ProjectConfig(
-            project_name="foo", starting_path=pyproject_path
-        )
+        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        result = autoimport_config.get_option("bar")
+        result = config.get_option("bar")
 
         assert result == "baz"
 
@@ -32,9 +72,9 @@ class TestProjectConfig:
         When the `ProjectConfig` class is instantiated,
         Then the situation is handled gracefully
         """
-        autoimport_config = ProjectConfig(project_name="foo", starting_path=Path("/"))
+        config = ProjectConfig(project_name="foo", starting_path=Path("/"))
 
-        result = autoimport_config.get_option("bar")
+        result = config.get_option("bar")
 
         assert result is None
 
@@ -44,13 +84,13 @@ class TestProjectConfig:
         When a missing option is retrieved with a given default,
         Then the default is returned
         """
-        autoimport_config = ProjectConfig(project_name="foo", starting_path=Path("/"))
+        config = ProjectConfig(project_name="foo", starting_path=Path("/"))
 
-        result = autoimport_config.get_option("bar", "baz")
+        result = config.get_option("bar", "baz")
 
         assert result == "baz"
 
-    def test_valid_pyproject_with_no_autoimport_section(
+    def test_valid_pyproject_with_no_project_section(
         self, create_tmp_file: Callable[..., Path]
     ) -> None:
         """
@@ -60,10 +100,8 @@ class TestProjectConfig:
         """
         config_toml = toml.dumps({"foo": "bar"})
         pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
-        autoimport_config = ProjectConfig(
-            project_name="baz", starting_path=pyproject_path
-        )
+        config = ProjectConfig(project_name="baz", starting_path=pyproject_path)
 
-        result = autoimport_config.get_option("foo")
+        result = config.get_option("foo")
 
         assert result is None
