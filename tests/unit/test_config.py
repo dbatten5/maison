@@ -22,6 +22,18 @@ class TestProjectConfig:
 
         assert str(config) == f"ProjectConfig (config_path={pyproject_path})"
 
+    def test_repr_no_config_path(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given an instance of `ProjectConfig` without a `config_path`,
+        When the string representation is retrieved,
+        Then a useful representation is returned
+        """
+        pyproject_path = create_tmp_file()
+
+        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
+
+        assert str(config) == "ProjectConfig (config_path=None)"
+
     def test_to_dict(self, create_tmp_file: Callable[..., Path]) -> None:
         """
         Given an instance of `ProjectConfig`,
