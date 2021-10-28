@@ -2,9 +2,12 @@
 from pathlib import Path
 from typing import Callable
 
+import pytest
 import toml
+from pydantic import ValidationError
 
 from maison.config import ProjectConfig
+from maison.schema import ConfigSchema
 
 
 class TestProjectConfig:
@@ -198,3 +201,165 @@ option_2 = value_2
             "section 1": {"option_1": "value_1"},
             "section 2": {"option_2": "value_2"},
         }
+
+
+class TestValidation:
+    """Tests for schema validation."""
+
+    def test_no_schema(self) -> None:
+        """
+        Given an instance of `ProjectConfig` with no schema,
+        When the `validate` method is called,
+        Then nothing happens
+        """
+        config = ProjectConfig(project_name="acme", starting_path=Path("/"))
+
+        assert config.to_dict() == {}
+
+        config.validate()
+
+        assert config.to_dict() == {}
+
+    def test_one_schema_with_valid_config(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called,
+        Then the configuration is validated
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+
+        config_toml = toml.dumps({"tool": {"foo": {"bar": "baz"}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+            schema=Schema,
+        )
+
+        config.validate()
+
+        assert config.get_option("bar") == "baz"
+
+    def test_use_schema_values(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called,
+        Then the configuration is validated and values are cast to those in the schema
+            and default values are used
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+            other: str = "hello"
+
+        config_toml = toml.dumps({"tool": {"foo": {"bar": 1}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+            schema=Schema,
+        )
+
+        config.validate()
+
+        assert config.get_option("bar") == "1"
+        assert config.get_option("other") == "hello"
+
+    def test_not_use_schema_values(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called with `use_schema_values` set to `False`,
+        Then the configuration is validated but values remain as in the config
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+            other: str = "hello"
+
+        config_toml = toml.dumps({"tool": {"foo": {"bar": 1}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+            schema=Schema,
+        )
+
+        config.validate(use_schema_values=False)
+
+        assert config.get_option("bar") == 1
+        assert config.get_option("other") is None
+
+    def test_schema_override(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called with a new schema,
+        Then the new schema is used
+        """
+
+        class Schema1(ConfigSchema):
+            """Defines schema for 1."""
+
+            bar: str = "schema_1"
+
+        class Schema2(ConfigSchema):
+            """Defines schema for 2."""
+
+            bar: str = "schema_2"
+
+        config_toml = toml.dumps({"tool": {"foo": {}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+            schema=Schema1,
+        )
+
+        config.validate(schema=Schema2)
+
+        assert config.get_option("bar") == "schema_2"
+
+    def test_invalid_configuration(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given a configuration which doesn't conform to the schema,
+        When the `validate` method is called,
+        Then an error is raised
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+
+        config_toml = toml.dumps({"tool": {"foo": {}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+            schema=Schema,
+        )
+
+        with pytest.raises(ValidationError):
+            config.validate()

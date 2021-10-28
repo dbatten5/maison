@@ -75,3 +75,73 @@ config = ProjectConfig(
 print(config)
 # ProjectConfig (config_path=/some/other/path/pyproject.toml)
 ```
+
+# Validation
+
+`maison` offers optional schema validation using [pydantic](https://pydantic-docs.helpmanual.io/).
+
+To validate a configuration, first create a schema which subclasses `ConfigSchema`:
+
+```python
+from maison import ConfigSchema
+
+class MySchema(ConfigSchema):
+  foo: str = "my_default"
+```
+
+!!! note ""
+    `ConfigSchema` offers all the same functionality as the `pydantic` [BaseModel](https://pydantic-docs.helpmanual.io/usage/models/)
+
+Then inject the schema when instantiating a `ProjectConfig`:
+
+```python
+from maison import ProjectConfig
+
+config = ProjectConfig(project_name="acme", schema=MySchema)
+```
+
+To validate the config, simply run `validate()` on the config instance:
+
+```python
+config.validate()
+```
+
+If the configuration is invalid, a `pydantic` `ValidationError` will be raised. If the
+configuration is valid, nothing will happen.
+
+## Casting and default values
+
+By default, `maison` will replace the values in the config with whatever comes back from
+the validation. For example, for a config file that looks like this:
+
+```toml
+[tool.acme]
+foo = 1
+```
+
+And a schema that looks like this:
+
+```python
+class MySchema(ConfigSchema):
+  foo: str
+  bar: str = "my_default"
+```
+
+Running the config through validation will render the following:
+
+```python
+config = ProjectConfig(project_name="acme", schema=MySchema)
+
+config.to_dict() # {"foo": 1}
+
+config.validate()
+config.to_dict() # {"foo": "1", "bar": "my_default"}
+```
+
+If you prefer to keep the config values untouched and just perform simple validation,
+add a `use_schema_values=False` argument to the `validate` method.
+
+## Schema precedence
+
+The `validate` method also accepts a `schema` is an argument. If one is provided here,
+it will be used instead of a schema passed as an init argument.
