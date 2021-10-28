@@ -4,88 +4,88 @@ from typing import Callable
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from maison.utils import get_pyproject_path
-from maison.utils import path_contains_pyproject
+from maison.utils import get_file_path
+from maison.utils import path_contains_file
 
 
-class TestContainsPyproject:
-    """Tests for the `contains_pyproject` function"""
+class TestContainsFile:
+    """Tests for the `contains_file` function"""
 
-    def test_pyproject_found(self, create_tmp_file: Callable[..., Path]) -> None:
+    def test_found(self, create_tmp_file: Callable[..., Path]) -> None:
         """
-        Given a path containing a `pyproject.toml` file,
-        When the `contains_pyproject` function is invoked with the path,
+        Given a path containing a file,
+        When the `path_contains_file` function is invoked with the path and filename,
         Then a `True` is returned
         """
-        path = create_tmp_file(filename="pyproject.toml")
+        path = create_tmp_file(filename="file.txt")
 
-        result = path_contains_pyproject(path.parent)
+        result = path_contains_file(path=path.parent, filename="file.txt")
 
         assert result is True
 
-    def test_pyproject_not_found(self, create_tmp_file: Callable[..., Path]) -> None:
+    def test_not_found(self, create_tmp_file: Callable[..., Path]) -> None:
         """
-        Given a path not containing a `pyproject.toml` file,
-        When the `contains_pyproject` function is invoked with the path,
+        Given a path not containing a file,
+        When the `path_contains_file` function is invoked with the path and filename,
         Then a `False` is returned
         """
-        path = create_tmp_file(filename="foo.toml")
+        path = create_tmp_file(filename="file.txt")
 
-        result = path_contains_pyproject(path.parent)
+        result = path_contains_file(path=path.parent, filename="other.txt")
 
         assert result is False
 
 
-class TestGetPyprojectPath:
-    """Tests for the `get_pyproject_path`"""
+class TestGetFilePath:
+    """Tests for the `get_file_path`"""
 
     @patch("maison.utils.Path", autospec=True)
     def test_in_current_directory(
         self, mock_path: MagicMock, create_tmp_file: Callable[..., Path]
     ) -> None:
         """
-        Given a `pyproject.toml` file in the `cwd`,
-        When the `get_pyproject_path` function is invoked without a `starting_path`,
-        Then the path to the `pyproject.toml` is returned
+        Given a file in the `cwd`,
+        When the `get_file_path` function is invoked without a `starting_path`,
+        Then the path to the file is returned
         """
-        path_to_pyproject = create_tmp_file(filename="pyproject.toml")
-        mock_path.cwd.return_value = path_to_pyproject.parent
+        path_to_file = create_tmp_file(filename="file.txt")
+        mock_path.cwd.return_value = path_to_file.parent
 
-        result = get_pyproject_path()
+        result = get_file_path(filename="file.txt")
 
-        assert result == path_to_pyproject
+        assert result == path_to_file
 
     def test_in_parent_directory(self, create_tmp_file: Callable[..., Path]) -> None:
         """
-        Given a `pyproject.toml` file in the parent of `cwd`,
-        When the `get_pyproject_path` function is invoked,
-        Then the path to the `pyproject.toml` is returned
+        Given a file in the parent of `cwd`,
+        When the `get_file_path` function is invoked,
+        Then the path to the file is returned
         """
-        path_to_pyproject = create_tmp_file(filename="pyproject.toml")
-        sub_dir = path_to_pyproject / "sub"
+        path_to_file = create_tmp_file(filename="file.txt")
+        sub_dir = path_to_file / "sub"
 
-        result = get_pyproject_path(sub_dir)
+        result = get_file_path(filename="file.txt", starting_path=sub_dir)
 
-        assert result == path_to_pyproject
+        assert result == path_to_file
 
     def test_not_found(self) -> None:
         """
-        Given no `pyproject.toml` in the `cwd` or parent dirs,
-        When the `get_pyproject_path` function is invoked,
+        Given no in the `cwd` or parent dirs,
+        When the `get_file_path` function is invoked,
         Then `None` is returned
         """
-        result = get_pyproject_path(Path("/nowhere"))
+        result = get_file_path(filename="file.txt", starting_path=Path("/nowhere"))
 
         assert result is None
 
     def test_with_given_path(self, create_tmp_file: Callable[..., Path]) -> None:
         """
-        Given a `pyproject.toml` file in a path,
-        When the `get_pyproject_path` function is invoked with a `starting_path`,
-        Then the path to the `pyproject.toml` is returned
+        Given a file in a path,
+        When the `get_file_path` function is invoked with a `starting_path`,
+        Then the path to the file is returned
         """
-        path_to_pyproject = create_tmp_file(filename="pyproject.toml")
+        path_to_file = create_tmp_file(filename="file.txt")
 
-        result = get_pyproject_path(starting_path=path_to_pyproject)
+        result = get_file_path(filename="file.txt", starting_path=path_to_file)
 
-        assert result == path_to_pyproject
+        assert result == path_to_file

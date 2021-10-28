@@ -29,7 +29,7 @@ Suppose the following `pyproject.toml` lives somewhere in a project directory:
 
 ```toml
 [tool.acme]
-new_lines = true
+enable_useful_option = true
 ```
 
 `maison` exposes a `ProjectConfig` class to retrieve values from config files
@@ -40,8 +40,8 @@ from maison import ProjectConfig
 
 config = ProjectConfig(project_name="acme")
 
-if config.get_option("new_lines"):
-    # make sure to add new lines
+if config.get_option("enable_useful_option"):
+    # include the useful option
 ```
 
 ## Help

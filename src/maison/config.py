@@ -2,18 +2,21 @@
 from pathlib import Path
 from typing import Any
 from typing import Dict
+from typing import List
 from typing import Optional
-from typing import Tuple
 
-import toml
-
-from maison.utils import get_pyproject_path
+from maison.utils import _find_config
 
 
 class ProjectConfig:
     """Defines the `ProjectConfig` and provides accessors to get config values."""
 
-    def __init__(self, project_name: str, starting_path: Optional[Path] = None) -> None:
+    def __init__(
+        self,
+        project_name: str,
+        starting_path: Optional[Path] = None,
+        source_files: Optional[List[str]] = None,
+    ) -> None:
         """Initialize the config.
 
         Args:
@@ -21,8 +24,15 @@ class ProjectConfig:
                 in the config file
             starting_path: an optional starting path to start the search for config
                 file
+            source_files: an optional list of source config filenames to search for. If
+                none is provided then `pyproject.toml` will be used
         """
-        config_path, config_dict = _find_config(project_name, starting_path)
+        self.source_files = source_files or ["pyproject.toml"]
+        config_path, config_dict = _find_config(
+            project_name=project_name,
+            source_files=self.source_files,
+            starting_path=starting_path,
+        )
         self._config_dict: Dict[str, Any] = config_dict or {}
         self.config_path: Optional[Path] = config_path
 
@@ -32,7 +42,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"{self.__class__.__name__}" f" (config_path={self.config_path})"
+        return f"{self.__class__.__name__} (config_path={self.config_path})"
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -63,27 +73,3 @@ class ProjectConfig:
             The value of the given config option or `None` if it doesn't exist
         """
         return self._config_dict.get(option_name, default_value)
-
-
-def _find_config(
-    project_name: str,
-    starting_path: Optional[Path] = None,
-) -> Tuple[Optional[Path], Dict[str, Any]]:
-    """Find the desired config file.
-
-    Args:
-        project_name: the name of the project to be used to find the right section in
-            the config file
-        starting_path: an optional starting path to start the search
-
-    Returns:
-        a tuple of the path to the config file if found, and a dictionary of the config
-            values
-    """
-    pyproject_path: Optional[Path] = get_pyproject_path(starting_path)
-    if pyproject_path:
-        return pyproject_path, toml.load(pyproject_path).get("tool", {}).get(
-            project_name, {}
-        )
-
-    return None, {}

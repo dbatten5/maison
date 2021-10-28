@@ -13,6 +13,7 @@ theme:
 
 nav:
   - Maison: index.md
+  - Usage: usage.md
   - Reference: reference.md
   - Contributing: contributing.md
 

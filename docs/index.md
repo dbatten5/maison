@@ -17,10 +17,7 @@ configuration options so that they may be used in the application.
 pip install maison
 ```
 
-# Usage
-
-!!! warning ""
-    Currently only reading from a `pyproject.toml` is supported
+# Example
 
 Suppose we have a `pyproject.toml` which looks like the following:
 
@@ -36,17 +33,4 @@ from maison import ProjectConfig
 
 config = ProjectConfig(project_name="acme")
 config.get_option("foo") # returns "bar"
-```
-
-`maison` searches for config files by starting at `Path.cwd()` and moving up
-the tree until it finds a `pyproject.toml` or there are no more parent paths.
-
-You can start searching from a different path by providing a `starting_path`
-init variable to `ProjectConfig`.
-
-You can also provide an optional second argument to `.get_option` which will
-be returned if the given option isn't found. For example in the above example:
-
-```python
-config.get_option("baz", "default") # returns "default"
 ```
