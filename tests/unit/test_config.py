@@ -168,3 +168,33 @@ class TestSourceFiles:
 
         assert str(config) == f"ProjectConfig (config_path={source_path_1})"
         assert result == "baz"
+
+
+class TestIniFiles:
+    """Tests for handling x.ini config files."""
+
+    def test_valid_ini_file(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given a valid .ini file as a source,
+        When the `ProjectConfig` is instantiated with the sources,
+        Then the .ini file is parsed and the config dict is populated
+        """
+        ini_file = """
+[section 1]
+option_1 = value_1
+
+[section 2]
+option_2 = value_2
+        """
+        source_path = create_tmp_file(content=ini_file, filename="foo.ini")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=source_path,
+            source_files=["foo.ini"],
+        )
+
+        assert str(config) == f"ProjectConfig (config_path={source_path})"
+        assert config.to_dict() == {
+            "section 1": {"option_1": "value_1"},
+            "section 2": {"option_2": "value_2"},
+        }

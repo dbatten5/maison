@@ -1,4 +1,6 @@
 """Module to hold various utils."""
+import configparser
+from functools import lru_cache
 from pathlib import Path
 from typing import Any
 from typing import Dict
@@ -25,7 +27,7 @@ def path_contains_file(path: Path, filename: str) -> bool:
 def get_file_path(
     filename: str, starting_path: Optional[Path] = None
 ) -> Optional[Path]:
-    """Search for a `pyproject.toml` by traversing up the tree from a path.
+    """Search for a file by traversing up the tree from a path.
 
     Args:
         filename: the name of the file to search for
@@ -43,11 +45,11 @@ def get_file_path(
     return None
 
 
-def find_config(
+def _find_config(
     project_name: str,
     source_files: List[str],
     starting_path: Optional[Path] = None,
-) -> Tuple[Optional[Path], Dict[str, Any]]:
+) -> Tuple[Optional[Path], Dict[str, Any]]:  # pragma: no cover
     """Find the desired config file.
 
     Args:
@@ -66,7 +68,45 @@ def find_config(
             filename=source,
             starting_path=starting_path,
         )
-        if file_path and source.endswith("toml"):
-            return file_path, toml.load(file_path).get("tool", {}).get(project_name, {})
+
+        if not file_path:
+            continue
+
+        if source.endswith("toml"):
+            return file_path, _parse_toml(
+                file_path=file_path, section_name=project_name
+            )
+
+        if source.endswith("ini"):
+            return file_path, _parse_ini(file_path=file_path)
 
     return None, {}
+
+
+@lru_cache()
+def _parse_toml(file_path: Path, section_name: str) -> Dict[str, Any]:
+    """Parse a `.toml` file and return the values as a dict.
+
+    Args:
+        file_path: the path to the `.toml` file
+        section_name: the section header name, to be used as `[tool.{section_name}]`
+
+    Returns:
+        a dict of the values
+    """
+    return dict(toml.load(file_path).get("tool", {}).get(section_name, {}))
+
+
+@lru_cache()
+def _parse_ini(file_path: Path) -> Dict[str, Any]:
+    """Parse a `.ini` file and return the values as a dict.
+
+    Args:
+        file_path: the path to the `.ini` file
+
+    Returns:
+        a dict of the values
+    """
+    config = configparser.ConfigParser()
+    config.read(file_path)
+    return {section: dict(config.items(section)) for section in config.sections()}

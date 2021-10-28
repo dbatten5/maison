@@ -5,7 +5,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 
-from maison.utils import find_config
+from maison.utils import _find_config
 
 
 class ProjectConfig:
@@ -28,7 +28,7 @@ class ProjectConfig:
                 none is provided then `pyproject.toml` will be used
         """
         self.source_files = source_files or ["pyproject.toml"]
-        config_path, config_dict = find_config(
+        config_path, config_dict = _find_config(
             project_name=project_name,
             source_files=self.source_files,
             starting_path=starting_path,
@@ -42,7 +42,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"{self.__class__.__name__}" f" (config_path={self.config_path})"
+        return f"{self.__class__.__name__} (config_path={self.config_path})"
 
     def __str__(self) -> str:
         """Return the __str__.
