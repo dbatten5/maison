@@ -18,7 +18,7 @@ class ProjectConfig:
         project_name: str,
         starting_path: Optional[Path] = None,
         source_files: Optional[List[str]] = None,
-        schema: Optional[Type[ConfigSchema]] = None,
+        config_schema: Optional[Type[ConfigSchema]] = None,
     ) -> None:
         """Initialize the config.
 
@@ -29,7 +29,7 @@ class ProjectConfig:
                 file
             source_files: an optional list of source config filenames to search for. If
                 none is provided then `pyproject.toml` will be used
-            schema: an optional `pydantic` model to define the config schema
+            config_schema: an optional `pydantic` model to define the config schema
         """
         self.source_files = source_files or ["pyproject.toml"]
         config_path, config_dict = _find_config(
@@ -39,7 +39,7 @@ class ProjectConfig:
         )
         self._config_dict: Dict[str, Any] = config_dict or {}
         self.config_path: Optional[Path] = config_path
-        self.schema = schema
+        self.config_schema = config_schema
 
     def __repr__(self) -> str:
         """Return the __repr__.
@@ -67,7 +67,7 @@ class ProjectConfig:
 
     def validate(
         self,
-        schema: Optional[Type[ConfigSchema]] = None,
+        config_schema: Optional[Type[ConfigSchema]] = None,
         use_schema_values: bool = True,
     ) -> None:
         """Validate the configuration.
@@ -87,8 +87,8 @@ class ProjectConfig:
             {"foo": "1"}
 
         Args:
-            schema: an optional `pydantic` base model to define the schema. This takes
-                precedence over a schema provided at object instantiation.
+            config_schema: an optional `pydantic` base model to define the schema. This
+                takes precedence over a schema provided at object instantiation.
             use_schema_values: an optional boolean to indicate whether the result
                 of passing the config through the schema should overwrite the existing
                 config values, meaning values are cast to types defined in the schema as
@@ -96,10 +96,10 @@ class ProjectConfig:
         """
         validated_schema: Optional[ConfigSchema] = None
 
-        if schema:
-            validated_schema = schema(**self._config_dict)
-        elif self.schema:
-            validated_schema = self.schema(**self._config_dict)
+        if config_schema:
+            validated_schema = config_schema(**self._config_dict)
+        elif self.config_schema:
+            validated_schema = self.config_schema(**self._config_dict)
 
         if validated_schema and use_schema_values:
             self._config_dict = validated_schema.dict()

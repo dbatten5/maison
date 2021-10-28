@@ -97,7 +97,7 @@ Then inject the schema when instantiating a `ProjectConfig`:
 ```python
 from maison import ProjectConfig
 
-config = ProjectConfig(project_name="acme", schema=MySchema)
+config = ProjectConfig(project_name="acme", config_schema=MySchema)
 ```
 
 To validate the config, simply run `validate()` on the config instance:
@@ -130,7 +130,7 @@ class MySchema(ConfigSchema):
 Running the config through validation will render the following:
 
 ```python
-config = ProjectConfig(project_name="acme", schema=MySchema)
+config = ProjectConfig(project_name="acme", config_schema=MySchema)
 
 config.to_dict() # {"foo": 1}
 
@@ -143,5 +143,5 @@ add a `use_schema_values=False` argument to the `validate` method.
 
 ## Schema precedence
 
-The `validate` method also accepts a `schema` is an argument. If one is provided here,
+The `validate` method also accepts a `config_schema` is an argument. If one is provided here,
 it will be used instead of a schema passed as an init argument.
