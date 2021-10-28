@@ -4,7 +4,9 @@ from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Type
 
+from maison.schema import ConfigSchema
 from maison.utils import _find_config
 
 
@@ -16,6 +18,7 @@ class ProjectConfig:
         project_name: str,
         starting_path: Optional[Path] = None,
         source_files: Optional[List[str]] = None,
+        schema: Optional[Type[ConfigSchema]] = None,
     ) -> None:
         """Initialize the config.
 
@@ -26,6 +29,7 @@ class ProjectConfig:
                 file
             source_files: an optional list of source config filenames to search for. If
                 none is provided then `pyproject.toml` will be used
+            schema: an optional `pydantic` model to define the config schema
         """
         self.source_files = source_files or ["pyproject.toml"]
         config_path, config_dict = _find_config(
@@ -35,6 +39,7 @@ class ProjectConfig:
         )
         self._config_dict: Dict[str, Any] = config_dict or {}
         self.config_path: Optional[Path] = config_path
+        self.schema = schema
 
     def __repr__(self) -> str:
         """Return the __repr__.
@@ -59,6 +64,45 @@ class ProjectConfig:
             a dict of the config options
         """
         return self._config_dict
+
+    def validate(
+        self,
+        schema: Optional[Type[ConfigSchema]] = None,
+        use_schema_values: bool = True,
+    ) -> None:
+        """Validate the configuration.
+
+        Note that this will cast values to whatever is defined in the schema. For
+        example, for the following schema:
+
+            class Schema(ConfigSchema):
+                foo: str
+
+        Validating a config with:
+
+            {"foo": 1}
+
+        Will result in:
+
+            {"foo": "1"}
+
+        Args:
+            schema: an optional `pydantic` base model to define the schema. This takes
+                precedence over a schema provided at object instantiation.
+            use_schema_values: an optional boolean to indicate whether the result
+                of passing the config through the schema should overwrite the existing
+                config values, meaning values are cast to types defined in the schema as
+                described above, and default values defined in the schema are used.
+        """
+        validated_schema: Optional[ConfigSchema] = None
+
+        if schema:
+            validated_schema = schema(**self._config_dict)
+        elif self.schema:
+            validated_schema = self.schema(**self._config_dict)
+
+        if validated_schema and use_schema_values:
+            self._config_dict = validated_schema.dict()
 
     def get_option(
         self, option_name: str, default_value: Optional[Any] = None
