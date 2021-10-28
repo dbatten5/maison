@@ -105,3 +105,66 @@ class TestGetOption:
         result = config.get_option("foo")
 
         assert result is None
+
+
+class TestSourceFiles:
+    """Tests for the `source_files` init argument."""
+
+    def test_not_found(self) -> None:
+        """
+        Given a source filename which doesn't exist,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the config dict is empty
+        """
+        config = ProjectConfig(project_name="foo", source_files=["foo"])
+
+        assert str(config) == "ProjectConfig (config_path=None)"
+        assert config.to_dict() == {}
+
+    def test_single_valid_toml_source(
+        self, create_tmp_file: Callable[..., Path]
+    ) -> None:
+        """
+        Given a `toml` source file other than `pyproject.toml`,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the source is retrieved correctly
+        """
+        config_toml = toml.dumps({"tool": {"foo": {"bar": "baz"}}})
+        source_path = create_tmp_file(content=config_toml, filename="another.toml")
+
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=source_path,
+            source_files=["another.toml"],
+        )
+
+        result = config.get_option("bar")
+
+        assert result == "baz"
+
+    def test_multiple_valid_toml_sources(
+        self, create_tmp_file: Callable[..., Path]
+    ) -> None:
+        """
+        Given multiple `toml` source files,
+        When the `ProjectConfig` is instantiated with the sources,
+        Then first source to be found is retrieved correctly
+        """
+        config_toml_1 = toml.dumps({"tool": {"foo": {"bar": "baz"}}})
+        source_path_1 = create_tmp_file(content=config_toml_1, filename="another.toml")
+
+        config_toml_2 = toml.dumps({"tool": {"oof": {"rab": "zab"}}})
+        source_path_2 = create_tmp_file(
+            content=config_toml_2, filename="pyproject.toml"
+        )
+
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=source_path_2,
+            source_files=["another.toml", "pyproject.toml"],
+        )
+
+        result = config.get_option("bar")
+
+        assert str(config) == f"ProjectConfig (config_path={source_path_1})"
+        assert result == "baz"
