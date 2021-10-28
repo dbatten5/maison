@@ -6,6 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from maison.config import ProjectConfig
+from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 
 
@@ -202,15 +203,14 @@ class TestValidation:
         """
         Given an instance of `ProjectConfig` with no schema,
         When the `validate` method is called,
-        Then nothing happens
+        Then a `NoSchemaError` is raised
         """
         config = ProjectConfig(project_name="acme", starting_path=Path("/"))
 
         assert config.to_dict() == {}
 
-        config.validate()
-
-        assert config.to_dict() == {}
+        with pytest.raises(NoSchemaError):
+            config.validate()
 
     def test_one_schema_with_valid_config(
         self,
@@ -350,3 +350,21 @@ class TestValidation:
 
         with pytest.raises(ValidationError):
             config.validate()
+
+    def test_setter(self) -> None:
+        """
+        Given an instance of `ProjectConfig`,
+        When the `config_schema` is set,
+        Then the `config_schema` can be retrieved
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+        config = ProjectConfig(project_name="foo")
+
+        assert config.config_schema is None
+
+        config.config_schema = Schema
+
+        assert config.config_schema is Schema
