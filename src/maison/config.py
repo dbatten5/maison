@@ -6,6 +6,7 @@ from typing import List
 from typing import Optional
 from typing import Type
 
+from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 from maison.utils import _find_config
 
@@ -39,7 +40,7 @@ class ProjectConfig:
         )
         self._config_dict: Dict[str, Any] = config_dict or {}
         self.config_path: Optional[Path] = config_path
-        self.config_schema = config_schema
+        self._config_schema: Optional[Type[ConfigSchema]] = config_schema
 
     def __repr__(self) -> str:
         """Return the __repr__.
@@ -64,6 +65,20 @@ class ProjectConfig:
             a dict of the config options
         """
         return self._config_dict
+
+    @property
+    def config_schema(self) -> Optional[Type[ConfigSchema]]:
+        """Return the `config_schema`.
+
+        Returns:
+            the `config_schema`
+        """
+        return self._config_schema
+
+    @config_schema.setter
+    def config_schema(self, config_schema: Type[ConfigSchema]) -> None:
+        """Set the `config_schema`."""
+        self._config_schema = config_schema
 
     def validate(
         self,
@@ -93,7 +108,13 @@ class ProjectConfig:
                 of passing the config through the schema should overwrite the existing
                 config values, meaning values are cast to types defined in the schema as
                 described above, and default values defined in the schema are used.
+
+        Raises:
+            NoSchemaError: when validation is attempted but no schema has been provided.
         """
+        if not config_schema and not self.config_schema:
+            raise NoSchemaError
+
         validated_schema: Optional[ConfigSchema] = None
 
         if config_schema:

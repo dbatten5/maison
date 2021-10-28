@@ -109,6 +109,13 @@ config.validate()
 If the configuration is invalid, a `pydantic` `ValidationError` will be raised. If the
 configuration is valid, nothing will happen.
 
+If `validate` is invoked but no schema has been provided, a `NoSchemaError` will
+be raised. A schema can be added after instantiation through a setter:
+
+```python
+config.config_schema = MySchema
+```
+
 ## Casting and default values
 
 By default, `maison` will replace the values in the config with whatever comes back from
