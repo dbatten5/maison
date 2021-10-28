@@ -240,7 +240,7 @@ class TestValidation:
         config = ProjectConfig(
             project_name="foo",
             starting_path=pyproject_path,
-            schema=Schema,
+            config_schema=Schema,
         )
 
         config.validate()
@@ -269,7 +269,7 @@ class TestValidation:
         config = ProjectConfig(
             project_name="foo",
             starting_path=pyproject_path,
-            schema=Schema,
+            config_schema=Schema,
         )
 
         config.validate()
@@ -298,7 +298,7 @@ class TestValidation:
         config = ProjectConfig(
             project_name="foo",
             starting_path=pyproject_path,
-            schema=Schema,
+            config_schema=Schema,
         )
 
         config.validate(use_schema_values=False)
@@ -331,10 +331,10 @@ class TestValidation:
         config = ProjectConfig(
             project_name="foo",
             starting_path=pyproject_path,
-            schema=Schema1,
+            config_schema=Schema1,
         )
 
-        config.validate(schema=Schema2)
+        config.validate(config_schema=Schema2)
 
         assert config.get_option("bar") == "schema_2"
 
@@ -358,7 +358,7 @@ class TestValidation:
         config = ProjectConfig(
             project_name="foo",
             starting_path=pyproject_path,
-            schema=Schema,
+            config_schema=Schema,
         )
 
         with pytest.raises(ValidationError):
