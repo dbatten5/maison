@@ -15,6 +15,14 @@ the given option isn't found:
 'default'
 ```
 
+`ProjectConfig` also exposes a `to_dict()` method to return all the config
+options:
+
+```python
+>>> config.to_dict()
+{'foo': 'bar'}
+```
+
 # Source files
 
 By default, `maison` will look for a `pyproject.toml` file. If you prefer to look
@@ -35,8 +43,10 @@ print(config)
 ```
 
 !!! warning ""
-    Currently only `.toml` and `.ini` files are supported. `maison` also assumes that
-    the relevant section will be in a `[tool.{project_name}]` section for `.toml` files.
+    Currently only `.toml` and `.ini` files are supported and it's assumed that
+    an `.ini` file will be named `{project_name}.ini`. For `.toml` files
+    `maison` assumes that the relevant section will be in a
+    `[tool.{project_name}]` section.
 
 To verify which source config file has been found, `ProjectConfig` exposes a
 `config_path` property:
