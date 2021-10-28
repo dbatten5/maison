@@ -17,6 +17,13 @@ the root of a project directory that uses the tool, for example in a
 `maison` aims to provide a simple and flexible way to read and validate those
 configuration options so that they may be used in the application.
 
+### Features
+
+- Supports multiple config files and multiple config filetypes.
+- Optional config validation with [pydantic](https://pydantic-docs.helpmanual.io/).
+- Caching of config files for quick access.
+- Fully tested and typed.
+
 ## Installation
 
 ```bash
