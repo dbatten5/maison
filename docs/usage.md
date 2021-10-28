@@ -43,8 +43,8 @@ print(config)
 ```
 
 !!! warning ""
-    Currently only `.toml` and `.ini` files are supported and it's assumed that
-    an `.ini` file will be named `{project_name}.ini`. For `.toml` files
+    Currently only `.toml` and `.ini` files are supported. For `.ini` files,
+    `maison` assumes that the whole file is relevant. For `.toml` files,
     `maison` assumes that the relevant section will be in a
     `[tool.{project_name}]` section.
 
