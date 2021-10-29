@@ -125,6 +125,25 @@ class TestSourceFiles:
         assert str(config) == "ProjectConfig (config_path=None)"
         assert config.to_dict() == {}
 
+    def test_unrecognised_file_extension(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given a source with a file extension that isn't recognised,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the config dict is empty
+        """
+        source_path = create_tmp_file(filename="foo.txt")
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=["foo.txt"],
+            starting_path=source_path,
+        )
+
+        assert str(config) == "ProjectConfig (config_path=None)"
+        assert config.to_dict() == {}
+
     def test_single_valid_toml_source(
         self, create_tmp_file: Callable[..., Path]
     ) -> None:
@@ -244,6 +263,32 @@ class TestValidation:
         )
 
         config.validate()
+
+        assert config.get_option("bar") == "baz"
+
+    def test_one_schema_injected_at_validation(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called,
+        Then the configuration is validated
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+
+        config_toml = toml.dumps({"tool": {"foo": {"bar": "baz"}}})
+        pyproject_path = create_tmp_file(content=config_toml, filename="pyproject.toml")
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+        )
+
+        config.validate(config_schema=Schema)
 
         assert config.get_option("bar") == "baz"
 

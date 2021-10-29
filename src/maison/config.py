@@ -102,7 +102,7 @@ class ProjectConfig:
             {"foo": "1"}
 
         Args:
-            config_schema: an optional `pydantic` base model to define the schema. This
+            config_schema: an optional `ConfigSchema` to define the schema. This
                 takes precedence over a schema provided at object instantiation.
             use_schema_values: an optional boolean to indicate whether the result
                 of passing the config through the schema should overwrite the existing
@@ -110,19 +110,16 @@ class ProjectConfig:
                 described above, and default values defined in the schema are used.
 
         Raises:
-            NoSchemaError: when validation is attempted but no schema has been provided.
+            NoSchemaError: when validation is attempted but no schema has been provided
         """
-        if not config_schema and not self.config_schema:
+        if not (config_schema or self.config_schema):
             raise NoSchemaError
 
-        validated_schema: Optional[ConfigSchema] = None
+        schema: Type[ConfigSchema] = config_schema or self.config_schema
 
-        if config_schema:
-            validated_schema = config_schema(**self._config_dict)
-        elif self.config_schema:
-            validated_schema = self.config_schema(**self._config_dict)
+        validated_schema: ConfigSchema = schema(**self._config_dict)
 
-        if validated_schema and use_schema_values:
+        if use_schema_values:
             self._config_dict = validated_schema.dict()
 
     def get_option(
