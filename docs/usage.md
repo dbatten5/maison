@@ -27,7 +27,8 @@ options:
 
 By default, `maison` will look for a `pyproject.toml` file. If you prefer to look
 elsewhere, provide a `source_files` list to `ProjectConfig` and `maison` will select the
-first source file it finds from the list. Note that there is no merging of configs.
+first source file it finds from the list. Note that there is no merging of configs if
+multiple files are discovered.
 
 
 ```python
@@ -107,7 +108,7 @@ config.validate()
 ```
 
 If the configuration is invalid, a `pydantic` `ValidationError` will be raised. If the
-configuration is valid, nothing will happen.
+configuration is valid, the validated values are returned.
 
 If `validate` is invoked but no schema has been provided, a `NoSchemaError` will
 be raised. A schema can be added after instantiation through a setter:

@@ -24,7 +24,7 @@ class TestProjectConfig:
 
         config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        assert str(config) == f"ProjectConfig (config_path={pyproject_path})"
+        assert str(config) == f"<ProjectConfig config_path:{pyproject_path}>"
 
     def test_repr_no_config_path(self, create_tmp_file: Callable[..., Path]) -> None:
         """
