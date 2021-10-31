@@ -36,7 +36,7 @@ class TestProjectConfig:
 
         config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        assert str(config) == "ProjectConfig (config_path=None)"
+        assert str(config) == "<ProjectConfig config_path:None>"
 
     def test_to_dict(self, create_tmp_file: Callable[..., Path]) -> None:
         """
@@ -122,7 +122,7 @@ class TestSourceFiles:
         """
         config = ProjectConfig(project_name="foo", source_files=["foo"])
 
-        assert str(config) == "ProjectConfig (config_path=None)"
+        assert config.config_path is None
         assert config.to_dict() == {}
 
     def test_unrecognised_file_extension(
@@ -141,7 +141,7 @@ class TestSourceFiles:
             starting_path=source_path,
         )
 
-        assert str(config) == "ProjectConfig (config_path=None)"
+        assert config.config_path is None
         assert config.to_dict() == {}
 
     def test_single_valid_toml_source(
@@ -189,7 +189,7 @@ class TestSourceFiles:
 
         result = config.get_option("bar")
 
-        assert str(config) == f"ProjectConfig (config_path={source_path_1})"
+        assert config.config_path == source_path_1
         assert result == "baz"
 
 
@@ -216,7 +216,7 @@ option_2 = value_2
             source_files=["foo.ini"],
         )
 
-        assert str(config) == f"ProjectConfig (config_path={source_path})"
+        assert config.config_path == source_path
         assert config.to_dict() == {
             "section 1": {"option_1": "value_1"},
             "section 2": {"option_2": "value_2"},
