@@ -1,8 +1,9 @@
+# Maison
+
 [![Actions Status](https://github.com/dbatten5/maison/workflows/Tests/badge.svg)](https://github.com/dbatten5/maison/actions)
 [![Actions Status](https://github.com/dbatten5/maison/workflows/Release/badge.svg)](https://github.com/dbatten5/maison/actions)
 [![codecov](https://codecov.io/gh/dbatten5/maison/branch/main/graph/badge.svg?token=948J8ECAQT)](https://codecov.io/gh/dbatten5/maison)
-
-# Maison
+[![PyPI version](https://badge.fury.io/py/maison.svg)](https://badge.fury.io/py/maison)
 
 Read configuration settings from `python` configuration files.
 

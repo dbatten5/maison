@@ -48,7 +48,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"{self.__class__.__name__} (config_path={self.config_path})"
+        return f"<{self.__class__.__name__} config_path:{self.config_path}>"
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -84,22 +84,23 @@ class ProjectConfig:
         self,
         config_schema: Optional[Type[ConfigSchema]] = None,
         use_schema_values: bool = True,
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Validate the configuration.
 
-        Note that this will cast values to whatever is defined in the schema. For
-        example, for the following schema:
+        Warning:
+            Using this method with `use_schema_values` set to `True` will cast values to
+            whatever is defined in the schema. For example, for the following schema:
 
-            class Schema(ConfigSchema):
-                foo: str
+                class Schema(ConfigSchema):
+                    foo: str
 
-        Validating a config with:
+            Validating a config with:
 
-            {"foo": 1}
+                {"foo": 1}
 
-        Will result in:
+            Will result in:
 
-            {"foo": "1"}
+                {"foo": "1"}
 
         Args:
             config_schema: an optional `ConfigSchema` to define the schema. This
@@ -109,18 +110,23 @@ class ProjectConfig:
                 config values, meaning values are cast to types defined in the schema as
                 described above, and default values defined in the schema are used.
 
+        Returns:
+            the config values
+
         Raises:
             NoSchemaError: when validation is attempted but no schema has been provided
         """
         if not (config_schema or self.config_schema):
             raise NoSchemaError
 
-        schema: Type[ConfigSchema] = config_schema or self.config_schema
+        schema: Type[ConfigSchema] = config_schema or self.config_schema  # type: ignore
 
         validated_schema: ConfigSchema = schema(**self._config_dict)
 
         if use_schema_values:
             self._config_dict = validated_schema.dict()
+
+        return self._config_dict
 
     def get_option(
         self, option_name: str, default_value: Optional[Any] = None

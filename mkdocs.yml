@@ -24,7 +24,7 @@ plugins:
         python:
           rendering:
             show_root_heading: true
-            heading_level: 1
+
       watch:
         - src
   - autolinks
