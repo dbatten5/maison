@@ -6,6 +6,7 @@ import pytest
 from pydantic import ValidationError
 
 from maison.config import ProjectConfig
+from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 
 
@@ -22,7 +23,7 @@ class TestProjectConfig:
 
         config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        assert str(config) == f"ProjectConfig (config_path={pyproject_path})"
+        assert str(config) == f"<ProjectConfig config_path:{pyproject_path}>"
 
     def test_repr_no_config_path(self, create_tmp_file: Callable[..., Path]) -> None:
         """
@@ -34,7 +35,7 @@ class TestProjectConfig:
 
         config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        assert str(config) == "ProjectConfig (config_path=None)"
+        assert str(config) == "<ProjectConfig config_path:None>"
 
     def test_to_dict(self, create_pyproject_toml: Callable[..., Path]) -> None:
         """
@@ -116,7 +117,26 @@ class TestSourceFiles:
         """
         config = ProjectConfig(project_name="foo", source_files=["foo"])
 
-        assert str(config) == "ProjectConfig (config_path=None)"
+        assert config.config_path is None
+        assert config.to_dict() == {}
+
+    def test_unrecognised_file_extension(
+        self,
+        create_tmp_file: Callable[..., Path],
+    ) -> None:
+        """
+        Given a source with a file extension that isn't recognised,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the config dict is empty
+        """
+        source_path = create_tmp_file(filename="foo.txt")
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=["foo.txt"],
+            starting_path=source_path,
+        )
+
+        assert config.config_path is None
         assert config.to_dict() == {}
 
     def test_single_valid_toml_source(
@@ -161,7 +181,7 @@ class TestSourceFiles:
 
         result = config.get_option("bar")
 
-        assert str(config) == f"ProjectConfig (config_path={source_path_1})"
+        assert config.config_path == source_path_1
         assert result == "baz"
 
 
@@ -188,7 +208,7 @@ option_2 = value_2
             source_files=["foo.ini"],
         )
 
-        assert str(config) == f"ProjectConfig (config_path={source_path})"
+        assert config.config_path == source_path
         assert config.to_dict() == {
             "section 1": {"option_1": "value_1"},
             "section 2": {"option_2": "value_2"},
@@ -202,15 +222,14 @@ class TestValidation:
         """
         Given an instance of `ProjectConfig` with no schema,
         When the `validate` method is called,
-        Then nothing happens
+        Then a `NoSchemaError` is raised
         """
         config = ProjectConfig(project_name="acme", starting_path=Path("/"))
 
         assert config.to_dict() == {}
 
-        config.validate()
-
-        assert config.to_dict() == {}
+        with pytest.raises(NoSchemaError):
+            config.validate()
 
     def test_one_schema_with_valid_config(
         self,
@@ -235,6 +254,31 @@ class TestValidation:
         )
 
         config.validate()
+
+        assert config.get_option("bar") == "baz"
+
+    def test_one_schema_injected_at_validation(
+        self,
+        create_pyproject_toml: Callable[..., Path],
+    ) -> None:
+        """
+        Given an instance of `ProjectConfig` with a given schema,
+        When the `validate` method is called,
+        Then the configuration is validated
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+            bar: str
+
+        pyproject_path = create_pyproject_toml()
+        config = ProjectConfig(
+            project_name="foo",
+            starting_path=pyproject_path,
+        )
+
+        config.validate(config_schema=Schema)
 
         assert config.get_option("bar") == "baz"
 
@@ -350,3 +394,21 @@ class TestValidation:
 
         with pytest.raises(ValidationError):
             config.validate()
+
+    def test_setter(self) -> None:
+        """
+        Given an instance of `ProjectConfig`,
+        When the `config_schema` is set,
+        Then the `config_schema` can be retrieved
+        """
+
+        class Schema(ConfigSchema):
+            """Defines schema."""
+
+        config = ProjectConfig(project_name="foo")
+
+        assert config.config_schema is None
+
+        config.config_schema = Schema
+
+        assert config.config_schema is Schema

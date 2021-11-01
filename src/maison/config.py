@@ -6,6 +6,7 @@ from typing import List
 from typing import Optional
 from typing import Type
 
+from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 from maison.utils import _find_config
 
@@ -39,7 +40,7 @@ class ProjectConfig:
         )
         self._config_dict: Dict[str, Any] = config_dict or {}
         self.config_path: Optional[Path] = config_path
-        self.config_schema = config_schema
+        self._config_schema: Optional[Type[ConfigSchema]] = config_schema
 
     def __repr__(self) -> str:
         """Return the __repr__.
@@ -47,7 +48,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"{self.__class__.__name__} (config_path={self.config_path})"
+        return f"<{self.__class__.__name__} config_path:{self.config_path}>"
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -65,44 +66,67 @@ class ProjectConfig:
         """
         return self._config_dict
 
+    @property
+    def config_schema(self) -> Optional[Type[ConfigSchema]]:
+        """Return the `config_schema`.
+
+        Returns:
+            the `config_schema`
+        """
+        return self._config_schema
+
+    @config_schema.setter
+    def config_schema(self, config_schema: Type[ConfigSchema]) -> None:
+        """Set the `config_schema`."""
+        self._config_schema = config_schema
+
     def validate(
         self,
         config_schema: Optional[Type[ConfigSchema]] = None,
         use_schema_values: bool = True,
-    ) -> None:
+    ) -> Dict[str, Any]:
         """Validate the configuration.
 
-        Note that this will cast values to whatever is defined in the schema. For
-        example, for the following schema:
+        Warning:
+            Using this method with `use_schema_values` set to `True` will cast values to
+            whatever is defined in the schema. For example, for the following schema:
 
-            class Schema(ConfigSchema):
-                foo: str
+                class Schema(ConfigSchema):
+                    foo: str
 
-        Validating a config with:
+            Validating a config with:
 
-            {"foo": 1}
+                {"foo": 1}
 
-        Will result in:
+            Will result in:
 
-            {"foo": "1"}
+                {"foo": "1"}
 
         Args:
-            config_schema: an optional `pydantic` base model to define the schema. This
+            config_schema: an optional `ConfigSchema` to define the schema. This
                 takes precedence over a schema provided at object instantiation.
             use_schema_values: an optional boolean to indicate whether the result
                 of passing the config through the schema should overwrite the existing
                 config values, meaning values are cast to types defined in the schema as
                 described above, and default values defined in the schema are used.
+
+        Returns:
+            the config values
+
+        Raises:
+            NoSchemaError: when validation is attempted but no schema has been provided
         """
-        validated_schema: Optional[ConfigSchema] = None
+        if not (config_schema or self.config_schema):
+            raise NoSchemaError
 
-        if config_schema:
-            validated_schema = config_schema(**self._config_dict)
-        elif self.config_schema:
-            validated_schema = self.config_schema(**self._config_dict)
+        schema: Type[ConfigSchema] = config_schema or self.config_schema  # type: ignore
 
-        if validated_schema and use_schema_values:
+        validated_schema: ConfigSchema = schema(**self._config_dict)
+
+        if use_schema_values:
             self._config_dict = validated_schema.dict()
+
+        return self._config_dict
 
     def get_option(
         self, option_name: str, default_value: Optional[Any] = None

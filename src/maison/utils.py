@@ -49,7 +49,7 @@ def _find_config(
     project_name: str,
     source_files: List[str],
     starting_path: Optional[Path] = None,
-) -> Tuple[Optional[Path], Dict[str, Any]]:  # pragma: no cover
+) -> Tuple[Optional[Path], Dict[str, Any]]:
     """Find the desired config file.
 
     Args:
