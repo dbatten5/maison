@@ -39,8 +39,8 @@ class ProjectConfig:
             starting_path=starting_path,
         )
         self._config_dict: Dict[str, Any] = config_dict or {}
-        self.config_path: Optional[Path] = config_path
-        self._config_schema: Optional[Type[ConfigSchema]] = config_schema
+        self.config_path = config_path
+        self._config_schema = config_schema
 
     def __repr__(self) -> str:
         """Return the __repr__.
@@ -121,7 +121,7 @@ class ProjectConfig:
 
         schema: Type[ConfigSchema] = config_schema or self.config_schema  # type: ignore
 
-        validated_schema: ConfigSchema = schema(**self._config_dict)
+        validated_schema = schema(**self._config_dict)
 
         if use_schema_values:
             self._config_dict = validated_schema.dict()

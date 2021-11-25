@@ -36,7 +36,7 @@ def get_file_path(
     Returns:
         The `Path` to the file if it exists or `None` if it doesn't
     """
-    start: Path = starting_path or Path.cwd()
+    start = starting_path or Path.cwd()
 
     for path in [start, *start.parents]:
         if path_contains_file(path=path, filename=filename):
@@ -64,7 +64,7 @@ def _find_config(
             values
     """
     for source in source_files:
-        file_path: Optional[Path] = get_file_path(
+        file_path = get_file_path(
             filename=source,
             starting_path=starting_path,
         )
