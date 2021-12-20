@@ -184,6 +184,40 @@ class TestSourceFiles:
         assert config.config_path == source_path_1
         assert result == "baz"
 
+    def test_absolute_path(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given a source file with an absolute path to an existing config,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the source is successfully retrieved
+        """
+        path = create_tmp_file(filename="acme.ini")
+
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=[str(path)],
+        )
+
+        assert config.config_path == path
+
+    def test_absolute_path_not_exist(
+        self,
+        create_pyproject_toml: Callable[..., Path],
+    ) -> None:
+        """
+        Given a source file with an absolute path to an non-existing config,
+        When the `ProjectConfig` is instantiated with the source,
+        Then the missing source is ignored
+        """
+        pyproject_path = create_pyproject_toml()
+
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=["~/.config/acme.ini", "pyproject.toml"],
+            starting_path=pyproject_path,
+        )
+
+        assert config.config_path == pyproject_path
+
 
 class TestIniFiles:
     """Tests for handling x.ini config files."""

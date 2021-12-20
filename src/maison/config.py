@@ -28,8 +28,8 @@ class ProjectConfig:
                 in the config file
             starting_path: an optional starting path to start the search for config
                 file
-            source_files: an optional list of source config filenames to search for. If
-                none is provided then `pyproject.toml` will be used
+            source_files: an optional list of source config filenames or absolute paths
+                to search for. If none is provided then `pyproject.toml` will be used.
             config_schema: an optional `pydantic` model to define the config schema
         """
         self.source_files = source_files or ["pyproject.toml"]
