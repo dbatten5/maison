@@ -40,7 +40,7 @@ config = ProjectConfig(
 )
 
 print(config)
-# ProjectConfig (config_path=/path/to/acme.ini)
+# <ProjectConfig config_path:/path/to/acme.ini>
 ```
 
 !!! warning ""
@@ -55,6 +55,20 @@ To verify which source config file has been found, `ProjectConfig` exposes a
 ```python
 >>> config.config_path
 PosixPath('/path/to/pyproject.toml')
+```
+
+The source file can either be a filename or an absolute path to a config:
+
+```python
+from maison import ProjectConfig
+
+config = ProjectConfig(
+  project_name="acme",
+  source_files=["~/.config/acme.ini", "pyproject.toml"]
+)
+
+print(config)
+# <ProjectConfig config_path:/Users/tom.jones/.config/acme.ini>
 ```
 
 # Search paths
@@ -74,7 +88,7 @@ config = ProjectConfig(
 )
 
 print(config)
-# ProjectConfig (config_path=/some/other/path/pyproject.toml)
+# <ProjectConfig config_path:/some/other/path/pyproject.toml>
 ```
 
 # Validation

@@ -30,12 +30,16 @@ def get_file_path(
     """Search for a file by traversing up the tree from a path.
 
     Args:
-        filename: the name of the file to search for
+        filename: the name of the file or an absolute path to a config to search for
         starting_path: an optional path from which to start searching
 
     Returns:
         The `Path` to the file if it exists or `None` if it doesn't
     """
+    filename_path = Path(filename).expanduser()
+    if filename_path.is_absolute() and filename_path.is_file():
+        return filename_path
+
     start = starting_path or Path.cwd()
 
     for path in [start, *start.parents]:

@@ -48,6 +48,8 @@ class TestGetFilePath:
         When the `get_file_path` function is invoked without a `starting_path`,
         Then the path to the file is returned
         """
+        mock_path.return_value.expanduser.return_value.is_absolute.return_value = False
+
         path_to_file = create_tmp_file(filename="file.txt")
         mock_path.cwd.return_value = path_to_file.parent
 
@@ -89,3 +91,25 @@ class TestGetFilePath:
         result = get_file_path(filename="file.txt", starting_path=path_to_file)
 
         assert result == path_to_file
+
+    def test_absolute_path(self, create_tmp_file: Callable[..., Path]) -> None:
+        """
+        Given an absolute path to an existing file,
+        When the `get_file_path` function is invoked with the filename,
+        Then the path to the file is returned
+        """
+        path_to_file = create_tmp_file(filename="file.txt")
+
+        result = get_file_path(filename=str(path_to_file))
+
+        assert result == path_to_file
+
+    def test_absolute_path_not_exist(self) -> None:
+        """
+        Given an absolute path to an non-existing file,
+        When the `get_file_path` function is invoked with the filename,
+        Then None is returned
+        """
+        result = get_file_path(filename="~/xxxx/yyyy/doesnotexist.xyz")
+
+        assert result is None
