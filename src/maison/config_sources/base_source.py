@@ -15,10 +15,19 @@ class BaseSource(ABC):
         Args:
             filepath: the `Path` to the config file
             project_name: the name of the project, used to pick out the relevant section
-                in a `.toml` file
+                in a `.toml` or `.ini` file
         """
         self.filepath = filepath
         self.project_name = project_name
+
+    @property
+    def filename(self) -> str:
+        """Return the filename.
+
+        Returns:
+            the filename of the source
+        """
+        return self.filepath.name
 
     @abstractmethod
     def to_dict(self) -> Dict[Any, Any]:

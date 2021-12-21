@@ -1,5 +1,5 @@
 """Module to hold the `IniSource` class definition."""
-import configparser
+from configparser import ConfigParser
 from functools import lru_cache
 from typing import Any
 from typing import Dict
@@ -20,12 +20,12 @@ class IniSource(BaseSource):
         return {section: dict(config.items(section)) for section in config.sections()}
 
     @lru_cache()
-    def _load_file(self) -> configparser.ConfigParser:
+    def _load_file(self) -> ConfigParser:
         """Load the `.ini` file.
 
         Returns:
             a `ConfigParser` object with the `.ini` source read into it
         """
-        config = configparser.ConfigParser()
+        config = ConfigParser()
         config.read(self.filepath)
         return config

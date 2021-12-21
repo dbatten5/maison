@@ -11,7 +11,7 @@ class PyprojectSource(TomlSource):
     def to_dict(self) -> Dict[Any, Any]:
         """Convert the project `pyproject.toml` section to a dict.
 
-        Relies on the convention that config related to project acme will be located
+        Relies on the convention that config related to project `acme` will be located
         under a `[tool.acme]` section in `pyproject.toml`
 
         Returns:
