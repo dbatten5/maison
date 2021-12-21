@@ -1,4 +1,5 @@
 """Module to hold the `ProjectConfig` class definition."""
+from functools import reduce
 from pathlib import Path
 from typing import Any
 from typing import Dict
@@ -6,9 +7,10 @@ from typing import List
 from typing import Optional
 from typing import Type
 
+from maison.config_sources.base_source import BaseSource
 from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
-from maison.utils import _find_config
+from maison.utils import _collect_configs
 
 
 class ProjectConfig:
@@ -20,6 +22,7 @@ class ProjectConfig:
         starting_path: Optional[Path] = None,
         source_files: Optional[List[str]] = None,
         config_schema: Optional[Type[ConfigSchema]] = None,
+        merge_configs: bool = False,
     ) -> None:
         """Initialize the config.
 
@@ -31,15 +34,17 @@ class ProjectConfig:
             source_files: an optional list of source config filenames or absolute paths
                 to search for. If none is provided then `pyproject.toml` will be used.
             config_schema: an optional `pydantic` model to define the config schema
+            merge_configs: an optional boolean to determine whether configs should be
+                merged if multiple are found
         """
         self.source_files = source_files or ["pyproject.toml"]
-        config_path, config_dict = _find_config(
+        self.merge_configs = merge_configs
+        self._sources: List[BaseSource] = _collect_configs(
             project_name=project_name,
             source_files=self.source_files,
             starting_path=starting_path,
         )
-        self._config_dict: Dict[str, Any] = config_dict or {}
-        self.config_path = config_path
+        self._config_dict: Dict[str, Any] = self._generate_config_dict()
         self._config_schema = config_schema
 
     def __repr__(self) -> str:
@@ -48,7 +53,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"<{self.__class__.__name__} config_path:{self.config_path}>"
+        return f"<{self.__class__.__name__}>"
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -141,3 +146,13 @@ class ProjectConfig:
             The value of the given config option or `None` if it doesn't exist
         """
         return self._config_dict.get(option_name, default_value)
+
+    def _generate_config_dict(self) -> Dict[Any, Any]:
+        if len(self._sources) == 0:
+            return {}
+
+        if not self.merge_configs:
+            return self._sources[0].to_dict()
+
+        source_dicts = [source.to_dict() for source in self._sources]
+        return reduce(lambda a, b: {**a, **b}, source_dicts)

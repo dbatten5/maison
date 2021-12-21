@@ -10,6 +10,11 @@ from typing import Tuple
 
 import toml
 
+from maison.config_sources.base_source import BaseSource
+from maison.config_sources.ini_source import IniSource
+from maison.config_sources.pyproject_source import PyprojectSource
+from maison.config_sources.toml_source import TomlSource
+
 
 def path_contains_file(path: Path, filename: str) -> bool:
     """Determine whether a file exists in the given path.
@@ -47,6 +52,48 @@ def get_file_path(
             return path / filename
 
     return None
+
+
+def _collect_configs(
+    project_name: str,
+    source_files: List[str],
+    starting_path: Optional[Path] = None,
+) -> List[BaseSource]:
+    """Return a list of collated configs.
+
+    Args:
+        project_name: the name of the project to be used to find the right section in
+            the config file
+        source_files: a list of source config filenames to look for. The first one found
+            will be selected
+        starting_path: an optional starting path to start the search
+
+    Returns:
+        a list of the found config sources
+    """
+    sources: List[BaseSource] = []
+
+    for source in source_files:
+        file_path = get_file_path(
+            filename=source,
+            starting_path=starting_path,
+        )
+
+        if not file_path:
+            continue
+
+        source_kwargs = {"filepath": file_path, "project_name": project_name}
+
+        if source.endswith("toml"):
+            if source.startswith("pyproject"):
+                sources.append(PyprojectSource(**source_kwargs))
+            else:
+                sources.append(TomlSource(**source_kwargs))
+
+        if source.endswith("ini"):
+            sources.append(IniSource(**source_kwargs))
+
+    return sources
 
 
 def _find_config(
