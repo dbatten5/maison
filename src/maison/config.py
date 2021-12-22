@@ -6,6 +6,7 @@ from typing import Dict
 from typing import List
 from typing import Optional
 from typing import Type
+from typing import Union
 
 from maison.config_sources.base_source import BaseSource
 from maison.errors import NoSchemaError
@@ -62,6 +63,23 @@ class ProjectConfig:
             the representation
         """
         return self.__repr__()
+
+    @property
+    def config_path(self) -> Optional[Union[Path, List[Path]]]:
+        """Return a list of the paths to the config sources.
+
+        Returns:
+            `None` is no config sources have been found, a list of the found config
+            sources if `merge_configs` is `True`, or the path to the active config
+            source if `False`
+        """
+        if len(self._sources) == 0:
+            return None
+
+        if self.merge_configs:
+            return self.config_paths
+
+        return self.config_paths[0]
 
     @property
     def config_paths(self) -> List[Path]:

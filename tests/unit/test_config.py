@@ -105,7 +105,7 @@ class TestSourceFiles:
         """
         config = ProjectConfig(project_name="foo", source_files=["foo"])
 
-        assert config.config_paths == []
+        assert config.config_path is None
         assert config.to_dict() == {}
 
     def test_unrecognised_file_extension(
@@ -143,6 +143,7 @@ class TestSourceFiles:
 
         result = config.get_option("bar")
 
+        assert config.config_path == source_path
         assert result == "baz"
 
     def test_multiple_valid_toml_sources(
@@ -465,6 +466,7 @@ option_2 = true
             merge_configs=True,
         )
 
+        assert config.config_path == [config_1_path, config_2_path, pyproject_path]
         assert config.to_dict() == {
             "option_1": True,
             "foo": {
