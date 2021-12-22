@@ -2,6 +2,7 @@
 from pathlib import Path
 from typing import Any
 from typing import Dict
+from typing import Generator
 from typing import List
 from typing import Optional
 
@@ -40,13 +41,27 @@ def get_file_path(
     if filename_path.is_absolute() and filename_path.is_file():
         return filename_path
 
-    start = starting_path or Path.cwd()
-
-    for path in [start, *start.parents]:
+    for path in _generate_search_paths(starting_path=starting_path):
         if path_contains_file(path=path, filename=filename):
             return path / filename
 
     return None
+
+
+def _generate_search_paths(
+    starting_path: Optional[Path] = None,
+) -> Generator[Path, None, None]:
+    """Generate paths from either a starting path or `Path.cwd()`.
+
+    Args:
+        starting_path: an optional starting path to start yielding search paths
+
+    Yields:
+        a path
+    """
+    starting_path = starting_path or Path.cwd()
+    for path in [starting_path, *starting_path.parents]:
+        yield path
 
 
 def _collect_configs(
