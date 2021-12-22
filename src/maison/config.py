@@ -53,7 +53,7 @@ class ProjectConfig:
         Returns:
             the representation
         """
-        return f"<{self.__class__.__name__}>"
+        return f"<class '{self.__class__.__name__}'>"
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -62,6 +62,15 @@ class ProjectConfig:
             the representation
         """
         return self.__repr__()
+
+    @property
+    def config_paths(self) -> List[Path]:
+        """Return a list of the paths to the config sources.
+
+        Returns:
+            a list of the paths to the config sources
+        """
+        return [source.filepath for source in self._sources]
 
     def to_dict(self) -> Dict[str, Any]:
         """Return a dict of all the config options.

@@ -23,19 +23,7 @@ class TestProjectConfig:
 
         config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
 
-        assert str(config) == f"<ProjectConfig config_path:{pyproject_path}>"
-
-    def test_repr_no_config_path(self, create_tmp_file: Callable[..., Path]) -> None:
-        """
-        Given an instance of `ProjectConfig` without a `config_path`,
-        When the string representation is retrieved,
-        Then a useful representation is returned
-        """
-        pyproject_path = create_tmp_file()
-
-        config = ProjectConfig(project_name="foo", starting_path=pyproject_path)
-
-        assert str(config) == "<ProjectConfig config_path:None>"
+        assert str(config) == "<class 'ProjectConfig'>"
 
     def test_to_dict(self, create_pyproject_toml: Callable[..., Path]) -> None:
         """
@@ -117,7 +105,7 @@ class TestSourceFiles:
         """
         config = ProjectConfig(project_name="foo", source_files=["foo"])
 
-        assert config.config_path is None
+        assert config.config_paths == []
         assert config.to_dict() == {}
 
     def test_unrecognised_file_extension(
@@ -136,18 +124,16 @@ class TestSourceFiles:
             starting_path=source_path,
         )
 
-        assert config.config_path is None
+        assert config.config_paths == []
         assert config.to_dict() == {}
 
-    def test_single_valid_toml_source(
-        self, create_pyproject_toml: Callable[..., Path]
-    ) -> None:
+    def test_single_valid_toml_source(self, create_toml: Callable[..., Path]) -> None:
         """
         Given a `toml` source file other than `pyproject.toml`,
         When the `ProjectConfig` is instantiated with the source,
         Then the source is retrieved correctly
         """
-        source_path = create_pyproject_toml(filename="another.toml")
+        source_path = create_toml(filename="another.toml", content={"bar": "baz"})
 
         config = ProjectConfig(
             project_name="foo",
@@ -160,14 +146,16 @@ class TestSourceFiles:
         assert result == "baz"
 
     def test_multiple_valid_toml_sources(
-        self, create_pyproject_toml: Callable[..., Path]
+        self,
+        create_pyproject_toml: Callable[..., Path],
+        create_toml: Callable[..., Path],
     ) -> None:
         """
         Given multiple `toml` source files,
         When the `ProjectConfig` is instantiated with the sources,
         Then first source to be found is retrieved correctly
         """
-        source_path_1 = create_pyproject_toml(filename="another.toml")
+        source_path_1 = create_toml(filename="another.toml", content={"bar": "baz"})
 
         source_path_2 = create_pyproject_toml(
             section_name="oof", content={"rab": "zab"}
@@ -181,7 +169,7 @@ class TestSourceFiles:
 
         result = config.get_option("bar")
 
-        assert config.config_path == source_path_1
+        assert config.config_paths == [source_path_1, source_path_2]
         assert result == "baz"
 
     def test_absolute_path(self, create_tmp_file: Callable[..., Path]) -> None:
@@ -197,7 +185,7 @@ class TestSourceFiles:
             source_files=[str(path)],
         )
 
-        assert config.config_path == path
+        assert config.config_paths == [path]
 
     def test_absolute_path_not_exist(
         self,
@@ -216,7 +204,7 @@ class TestSourceFiles:
             starting_path=pyproject_path,
         )
 
-        assert config.config_path == pyproject_path
+        assert config.config_paths == [pyproject_path]
 
 
 class TestIniFiles:
@@ -242,7 +230,7 @@ option_2 = value_2
             source_files=["foo.ini"],
         )
 
-        assert config.config_path == source_path
+        assert config.config_paths == [source_path]
         assert config.to_dict() == {
             "section 1": {"option_1": "value_1"},
             "section 2": {"option_2": "value_2"},
@@ -446,3 +434,70 @@ class TestValidation:
         config.config_schema = Schema
 
         assert config.config_schema is Schema
+
+
+class TestMergeConfig:
+    """Tests for the merging of multiple config sources."""
+
+    def test_no_overwrites(
+        self,
+        create_toml: Callable[..., Path],
+        create_tmp_file: Callable[..., Path],
+        create_pyproject_toml: Callable[..., Path],
+    ) -> None:
+        """
+        Given multiple existing config sources with no overlapping options,
+        When the `merge_configs` boolean is set to `True`,
+        Then the configs are merged
+        """
+        config_1_path = create_toml(filename="config.toml", content={"option_1": True})
+        ini_file = """
+[foo]
+option_2 = true
+        """
+        config_2_path = create_tmp_file(filename="config.ini", content=ini_file)
+        pyproject_path = create_pyproject_toml(content={"option_3": True})
+
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
+            starting_path=pyproject_path,
+            merge_configs=True,
+        )
+
+        assert config.to_dict() == {
+            "option_1": True,
+            "foo": {
+                "option_2": "true",
+            },
+            "option_3": True,
+        }
+
+    def test_overwrites(
+        self,
+        create_toml: Callable[..., Path],
+        create_pyproject_toml: Callable[..., Path],
+    ) -> None:
+        """
+        Given multiple existing config sources with overlapping options,
+        When the `merge_configs` boolean is set to `True`,
+        Then the configs are merged from right to left
+        """
+        config_1_path = create_toml(
+            filename="config_1.toml", content={"option": "config_1"}
+        )
+        config_2_path = create_toml(
+            filename="config_2.toml", content={"option": "config_2"}
+        )
+        pyproject_path = create_pyproject_toml(content={"option": "config_3"})
+
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
+            starting_path=pyproject_path,
+            merge_configs=True,
+        )
+
+        assert config.to_dict() == {
+            "option": "config_3",
+        }
