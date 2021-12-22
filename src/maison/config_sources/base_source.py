@@ -20,6 +20,22 @@ class BaseSource(ABC):
         self.filepath = filepath
         self.project_name = project_name
 
+    def __repr__(self) -> str:
+        """Return the __repr__.
+
+        Returns:
+            the representation
+        """
+        return f"<class '{self.__class__.__name__}' path:{self.filepath}>"
+
+    def __str__(self) -> str:
+        """Return the __str__.
+
+        Returns:
+            the representation
+        """
+        return self.__repr__()
+
     @property
     def filename(self) -> str:
         """Return the filename.

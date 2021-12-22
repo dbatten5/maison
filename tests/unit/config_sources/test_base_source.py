@@ -15,6 +15,21 @@ class ConcreteSource(BaseSource):
         return {}
 
 
+class TestRepr:
+    """Tests for the `__repr__` method."""
+
+    def test_contains_path(self) -> None:
+        """
+        Given a instance of an extension of `BaseSource`,
+        When the repr is invoked,
+        Then a useful repr is returned
+        """
+        source = ConcreteSource(filepath=Path("~/file.txt"), project_name="acme")
+
+        assert "file.txt" in repr(source)
+        assert str(source) == repr(source)
+
+
 class TestFilename:
     """Tests for the `filename` property."""
 
