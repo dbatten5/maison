@@ -1,5 +1,7 @@
 """Module to hold various utils."""
 from pathlib import Path
+from typing import Any
+from typing import Dict
 from typing import List
 from typing import Optional
 
@@ -75,7 +77,12 @@ def _collect_configs(
         if not file_path:
             continue
 
-        source_kwargs = {"filepath": file_path, "project_name": project_name}
+        # Dict[str, Any] to stop mypy complaining:
+        # https://github.com/python/mypy/issues/5382#issuecomment-583901369
+        source_kwargs: Dict[str, Any] = {
+            "filepath": file_path,
+            "project_name": project_name,
+        }
 
         if source.endswith("toml"):
             if source.startswith("pyproject"):

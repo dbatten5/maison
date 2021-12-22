@@ -157,6 +157,14 @@ class ProjectConfig:
         return self._config_dict.get(option_name, default_value)
 
     def _generate_config_dict(self) -> Dict[Any, Any]:
+        """Generate the project config dict.
+
+        If `merge_configs` is set to `False` then we use the first config. If `True`
+        then the dicts of the sources are merged from right to left.
+
+        Returns:
+            the project config dict
+        """
         if len(self._sources) == 0:
             return {}
 
