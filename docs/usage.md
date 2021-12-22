@@ -27,8 +27,7 @@ options:
 
 By default, `maison` will look for a `pyproject.toml` file. If you prefer to look
 elsewhere, provide a `source_files` list to `ProjectConfig` and `maison` will select the
-first source file it finds from the list. Note that there is no merging of configs if
-multiple files are discovered.
+first source file it finds from the list.
 
 
 ```python
@@ -39,15 +38,16 @@ config = ProjectConfig(
   source_files=["acme.ini", "pyproject.toml"]
 )
 
-print(config)
-# <ProjectConfig config_path:/path/to/acme.ini>
+print(config.config_path)
+#> PosixPath(/path/to/acme.ini)
 ```
 
 !!! warning ""
     Currently only `.toml` and `.ini` files are supported. For `.ini` files,
-    `maison` assumes that the whole file is relevant. For `.toml` files,
+    `maison` assumes that the whole file is relevant. For `pyproject.toml` files,
     `maison` assumes that the relevant section will be in a
-    `[tool.{project_name}]` section.
+    `[tool.{project_name}]` section. For other `.toml` files `maison` assumes the whole
+    file is relevant.
 
 To verify which source config file has been found, `ProjectConfig` exposes a
 `config_path` property:
@@ -67,9 +67,42 @@ config = ProjectConfig(
   source_files=["~/.config/acme.ini", "pyproject.toml"]
 )
 
-print(config)
-# <ProjectConfig config_path:/Users/tom.jones/.config/acme.ini>
+print(config.config_path)
+#> PosixPath(/Users/tom.jones/.config/acme.ini)
 ```
+
+# Merging configs
+
+`maison` offers support for merging multiple configs. To do so, set the `merge_configs`
+flag to `True` in the constructor for `ProjectConfig`:
+
+```python
+from maison import ProjectConfig
+
+config = ProjectConfig(
+  project_name="acme",
+  source_files=["~/.config/acme.toml", "~/.acme.ini", "pyproject.toml"],
+  merge_configs=True
+)
+
+print(config.config_path)
+"""
+[
+  PosixPath(/Users/tom.jones/.config/acme.toml),
+  PosixPath(/Users/tom.jones/.acme.ini),
+  PosixPath(/path/to/pyproject.toml),
+]
+"""
+
+print(config.get_option("foo"))
+#> "bar"
+```
+
+!!! warning ""
+    When merging configs, `maison` merges from **right to left**, ie. rightmost sources
+    take precedence. So in the above example, if `~/config/.acme.toml` and
+    `pyproject.toml` both set `nice_option`, the value from `pyproject.toml` will be
+    returned from `config.get_option("nice_option")`.
 
 # Search paths
 
@@ -87,8 +120,8 @@ config = ProjectConfig(
   starting_path=Path("/some/other/path")
 )
 
-print(config)
-# <ProjectConfig config_path:/some/other/path/pyproject.toml>
+print(config.config_path)
+#> PosixPath(/some/other/path/pyproject.toml)
 ```
 
 # Validation
@@ -154,10 +187,12 @@ Running the config through validation will render the following:
 ```python
 config = ProjectConfig(project_name="acme", config_schema=MySchema)
 
-config.to_dict() # {"foo": 1}
+print(config.to_dict())
+#> {"foo": 1}
 
 config.validate()
-config.to_dict() # {"foo": "1", "bar": "my_default"}
+print(config.to_dict())
+#> {"foo": "1", "bar": "my_default"}
 ```
 
 If you prefer to keep the config values untouched and just perform simple validation,

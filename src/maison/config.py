@@ -66,7 +66,7 @@ class ProjectConfig:
 
     @property
     def config_path(self) -> Optional[Union[Path, List[Path]]]:
-        """Return a list of the paths to the config sources.
+        """Return a list of the path(s) to the config source(s).
 
         Returns:
             `None` is no config sources have been found, a list of the found config

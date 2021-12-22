@@ -1,5 +1,5 @@
 ::: maison.config.ProjectConfig
     selection:
       filters:
-        - "!^__"
+        - "!^_"
         - "^__init__$"
