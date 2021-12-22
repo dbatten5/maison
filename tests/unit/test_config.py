@@ -124,7 +124,7 @@ class TestSourceFiles:
             starting_path=source_path,
         )
 
-        assert config.config_paths == []
+        assert config.discovered_config_paths == []
         assert config.to_dict() == {}
 
     def test_single_valid_toml_source(self, create_toml: Callable[..., Path]) -> None:
@@ -170,7 +170,7 @@ class TestSourceFiles:
 
         result = config.get_option("bar")
 
-        assert config.config_paths == [source_path_1, source_path_2]
+        assert config.discovered_config_paths == [source_path_1, source_path_2]
         assert result == "baz"
 
     def test_absolute_path(self, create_tmp_file: Callable[..., Path]) -> None:
@@ -186,7 +186,7 @@ class TestSourceFiles:
             source_files=[str(path)],
         )
 
-        assert config.config_paths == [path]
+        assert config.discovered_config_paths == [path]
 
     def test_absolute_path_not_exist(
         self,
@@ -205,7 +205,7 @@ class TestSourceFiles:
             starting_path=pyproject_path,
         )
 
-        assert config.config_paths == [pyproject_path]
+        assert config.discovered_config_paths == [pyproject_path]
 
 
 class TestIniFiles:
@@ -231,7 +231,7 @@ option_2 = value_2
             source_files=["foo.ini"],
         )
 
-        assert config.config_paths == [source_path]
+        assert config.discovered_config_paths == [source_path]
         assert config.to_dict() == {
             "section 1": {"option_1": "value_1"},
             "section 2": {"option_2": "value_2"},

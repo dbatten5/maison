@@ -8,7 +8,6 @@ from typing import Optional
 from typing import Type
 from typing import Union
 
-from maison.config_sources.base_source import BaseSource
 from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 from maison.utils import _collect_configs
@@ -40,12 +39,12 @@ class ProjectConfig:
         """
         self.source_files = source_files or ["pyproject.toml"]
         self.merge_configs = merge_configs
-        self._sources: List[BaseSource] = _collect_configs(
+        self._sources = _collect_configs(
             project_name=project_name,
             source_files=self.source_files,
             starting_path=starting_path,
         )
-        self._config_dict: Dict[str, Any] = self._generate_config_dict()
+        self._config_dict = self._generate_config_dict()
         self._config_schema = config_schema
 
     def __repr__(self) -> str:
@@ -77,13 +76,13 @@ class ProjectConfig:
             return None
 
         if self.merge_configs:
-            return self.config_paths
+            return self.discovered_config_paths
 
-        return self.config_paths[0]
+        return self.discovered_config_paths[0]
 
     @property
-    def config_paths(self) -> List[Path]:
-        """Return a list of the paths to the config sources.
+    def discovered_config_paths(self) -> List[Path]:
+        """Return a list of the paths to the config sources found on the filesystem.
 
         Returns:
             a list of the paths to the config sources
