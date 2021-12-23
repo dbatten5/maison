@@ -32,5 +32,8 @@ In order to read the value of `foo`, run the following:
 from maison import ProjectConfig
 
 config = ProjectConfig(project_name="acme")
-config.get_option("foo") # returns "bar"
+foo_option = config.get_option("foo")
+
+print(foo_option)
+#> "bar"
 ```

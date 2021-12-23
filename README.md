@@ -21,6 +21,7 @@ configuration options so that they may be used in the application.
 ### Features
 
 - Supports multiple config files and multiple config filetypes.
+- Optional merging of multiple configs.
 - Optional config validation with [pydantic](https://pydantic-docs.helpmanual.io/).
 - Caching of config files for quick access.
 - Fully tested and typed.
