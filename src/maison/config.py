@@ -189,4 +189,24 @@ class ProjectConfig:
             return self._sources[0].to_dict()
 
         source_dicts = [source.to_dict() for source in self._sources]
-        return reduce(lambda a, b: {**a, **b}, source_dicts)
+        return reduce(lambda a, b: deep_merge, source_dicts)
+
+def deep_merge(source, destination):
+    """
+    >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
+    >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
+    >>> merge(b, a) == { 'first' : { 'all_rows' : { 'pass' : 'dog', 'fail' : 'cat', 'number' : '5' } } }
+    True
+
+    Taken from https://stackoverflow.com/a/20666342
+    """
+    for key, value in source.items():
+        if isinstance(value, dict):
+            # get node or create one
+            node = destination.setdefault(key, {})
+            merge(value, node)
+        else:
+            destination[key] = value
+
+    return destination
+
