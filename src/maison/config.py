@@ -191,6 +191,7 @@ class ProjectConfig:
         source_dicts = [source.to_dict() for source in self._sources]
         return reduce(lambda a, b: deep_merge(a, b), source_dicts)
 
+
 def deep_merge(destination, source):
     """
     Deep-merge dictionaries, with souce dict taking precedence over destination dict.
@@ -207,9 +208,12 @@ def deep_merge(destination, source):
         if isinstance(src_value, dict):
             # get node or create one
             dest_node = destination.setdefault(key, {})
+            if not isinstance(dest_node, dict):
+                raise RuntimeError(
+                    f"Cannot merge dict '{src_value}' into type '{type(dest_node)}'"
+                )
             deep_merge(dest_node, src_value)
         else:
             destination[key] = src_value
 
     return destination
-
