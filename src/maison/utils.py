@@ -74,8 +74,7 @@ def _collect_configs(
     Args:
         project_name: the name of the project to be used to find the right section in
             the config file
-        source_files: a list of source config filenames to look for. The first one found
-            will be selected
+        source_files: a list of source config filenames to look for.
         starting_path: an optional starting path to start the search
 
     Returns:
