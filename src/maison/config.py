@@ -10,7 +10,7 @@ from typing import Union
 
 from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
-from maison.utils import _collect_configs
+from maison.utils import deep_merge, _collect_configs
 
 
 class ProjectConfig:
@@ -190,30 +190,3 @@ class ProjectConfig:
 
         source_dicts = [source.to_dict() for source in self._sources]
         return reduce(lambda a, b: deep_merge(a, b), source_dicts)
-
-
-def deep_merge(destination, source):
-    """
-    Deep-merge dictionaries, with souce dict taking precedence over destination dict.
-    Note that the inputs may be modified in place.
-
-    >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
-    >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
-    >>> deep_merge(a, b) == { 'first' : { 'all_rows' : { 'pass' : 'dog', 'fail' : 'cat', 'number' : '5' } } }
-    True
-
-    Based on https://stackoverflow.com/a/20666342
-    """
-    for key, src_value in source.items():
-        if isinstance(src_value, dict):
-            # get node or create one
-            dest_node = destination.setdefault(key, {})
-            if not isinstance(dest_node, dict):
-                raise RuntimeError(
-                    f"Cannot merge dict '{src_value}' into type '{type(dest_node)}'"
-                )
-            deep_merge(dest_node, src_value)
-        else:
-            destination[key] = src_value
-
-    return destination
