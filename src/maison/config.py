@@ -10,7 +10,8 @@ from typing import Union
 
 from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
-from maison.utils import deep_merge, _collect_configs
+from maison.utils import _collect_configs
+from maison.utils import deep_merge
 
 
 class ProjectConfig:
