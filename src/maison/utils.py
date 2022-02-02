@@ -114,6 +114,16 @@ def _collect_configs(
 def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any, Any]:
     """Recursively updates the destination dictionary.
 
+    Usage example:
+    >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
+    >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
+    >>> deep_merge(a, b) == {
+    ...     "first": {"all_rows": {"pass": "dog", "fail": "cat", "number": "5"}}
+    ... }
+    True
+
+    Based on https://stackoverflow.com/a/20666342
+
     Args:
         destination: A dictionary to be merged into. This will be updated in place.
         source: The dictionary supplying data
@@ -125,16 +135,6 @@ def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any,
         RuntimeError: A dict cannot be merged on top of a non-dict.
           For example, the following would fail:
           `deep_merge({"foo": "bar"}, {"foo": {"baz": "qux"}})`
-
-    Usage example:
-    >>> a = { 'first' : { 'all_rows' : { 'pass' : 'dog', 'number' : '1' } } }
-    >>> b = { 'first' : { 'all_rows' : { 'fail' : 'cat', 'number' : '5' } } }
-    >>> deep_merge(a, b) == {
-    ...     "first": {"all_rows": {"pass": "dog", "fail": "cat", "number": "5"}}
-    ... }
-    True
-
-    Based on https://stackoverflow.com/a/20666342
     """
     for key, src_value in source.items():
         if isinstance(src_value, dict):
