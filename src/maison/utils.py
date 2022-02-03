@@ -122,6 +122,8 @@ def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any,
     ... }
     True
 
+    Note that the arguments may be modified!
+
     Based on https://stackoverflow.com/a/20666342
 
     Args:
