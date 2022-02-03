@@ -5,6 +5,7 @@ from typing import Dict
 
 import toml
 
+from ..errors import BadTomlError
 from .base_source import BaseSource
 
 
@@ -25,5 +26,13 @@ class TomlSource(BaseSource):
 
         Returns:
             the `.toml` source converted to a `dict`
+
+        Raises:
+            BadTomlError: If toml cannot be parsed
         """
-        return dict(toml.load(self.filepath))
+        try:
+            return dict(toml.load(self.filepath))
+        except toml.decoder.TomlDecodeError as exc:
+            raise BadTomlError(
+                f"Error trying to load toml file '{self.filepath}'"
+            ) from exc
