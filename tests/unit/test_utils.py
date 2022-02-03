@@ -3,11 +3,9 @@ from pathlib import Path
 from typing import Any
 from typing import Callable
 from typing import Dict
-from typing import Union
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from _pytest.python_api import RaisesContext
 from pytest import mark
 from pytest import param
 from pytest import raises
@@ -139,27 +137,29 @@ class TestGetFilePath:
             {1: {2: 4}, 2: 5},
             id="nested",
         ),
-        param(
-            {1: 2, 2: 5},
-            {1: {3: 4}},
-            raises(RuntimeError),
-            id="merge-dict-into-scalar",
-        ),
     ],
 )
 def test_deep_merge(
     a: Dict[Any, Any],
     b: Dict[Any, Any],
-    expected: Union[Dict[Any, Any], RaisesContext[Any]],
+    expected: Dict[Any, Any],
 ) -> None:
     """
     Given two dictionaries `a` and `b`,
     when the `deep_merge` function is invoked with `a` and `b` as arguments,
     Test that the returned value is as expected.
     """
-    if isinstance(expected, RaisesContext):
-        with expected:
-            deep_merge(a, b)
-    else:
-        assert deep_merge(a, b) == expected
-        assert a == expected
+    assert deep_merge(a, b) == expected
+    assert a == expected
+
+
+def test_deep_merge_dict_into_scalar() -> None:
+    """
+    Given two incompatible dictionaries `a` and `b`,
+    when the `deep_merge` function is invoked with `a` and `b` as arguments,
+    Test that a RuntimeError is raised.
+    """
+    a = {1: 2, 2: 5}
+    b = {1: {3: 4}}
+    with raises(RuntimeError):
+        deep_merge(a, b)
