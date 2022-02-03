@@ -133,8 +133,8 @@ def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any,
 
     Raises:
         RuntimeError: A dict cannot be merged on top of a non-dict.
-          For example, the following would fail:
-          `deep_merge({"foo": "bar"}, {"foo": {"baz": "qux"}})`
+            For example, the following would fail:
+            `deep_merge({"foo": "bar"}, {"foo": {"baz": "qux"}})`
     """
     for key, src_value in source.items():
         if isinstance(src_value, dict):
