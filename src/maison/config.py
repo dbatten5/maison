@@ -11,6 +11,7 @@ from typing import Union
 from maison.errors import NoSchemaError
 from maison.schema import ConfigSchema
 from maison.utils import _collect_configs
+from maison.utils import deep_merge
 
 
 class ProjectConfig:
@@ -189,4 +190,4 @@ class ProjectConfig:
             return self._sources[0].to_dict()
 
         source_dicts = [source.to_dict() for source in self._sources]
-        return reduce(lambda a, b: {**a, **b}, source_dicts)
+        return reduce(lambda a, b: deep_merge(a, b), source_dicts)

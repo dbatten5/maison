@@ -1,9 +1,16 @@
 """Tests for the `utils` module."""
 from pathlib import Path
+from typing import Any
 from typing import Callable
+from typing import Dict
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
+from pytest import mark
+from pytest import param
+from pytest import raises
+
+from maison.utils import deep_merge
 from maison.utils import get_file_path
 from maison.utils import path_contains_file
 
@@ -113,3 +120,46 @@ class TestGetFilePath:
         result = get_file_path(filename="~/xxxx/yyyy/doesnotexist.xyz")
 
         assert result is None
+
+
+@mark.parametrize(
+    "a,b,expected",
+    [
+        param(
+            {1: 2, 3: 4},
+            {3: 5, 6: 7},
+            {1: 2, 3: 5, 6: 7},
+            id="simple",
+        ),
+        param(
+            {1: 2, 3: {4: 5, 6: 7}},
+            {3: {6: 8, 9: 10}, 11: 12},
+            {1: 2, 3: {4: 5, 6: 8, 9: 10}, 11: 12},
+            id="nested",
+        ),
+    ],
+)
+def test_deep_merge(
+    a: Dict[Any, Any],
+    b: Dict[Any, Any],
+    expected: Dict[Any, Any],
+) -> None:
+    """
+    Given two dictionaries `a` and `b`,
+    when the `deep_merge` function is invoked with `a` and `b` as arguments,
+    Test that the returned value is as expected.
+    """
+    assert deep_merge(a, b) == expected
+    assert a == expected
+
+
+def test_deep_merge_dict_into_scalar() -> None:
+    """
+    Given two incompatible dictionaries `a` and `b`,
+    when the `deep_merge` function is invoked with `a` and `b` as arguments,
+    Test that a RuntimeError is raised.
+    """
+    a = {1: 2, 2: 5}
+    b = {1: {3: 4}}
+    with raises(RuntimeError):
+        deep_merge(a, b)

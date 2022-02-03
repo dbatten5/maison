@@ -503,3 +503,34 @@ option_2 = true
         assert config.to_dict() == {
             "option": "config_3",
         }
+
+    def test_nested(
+        self,
+        create_toml: Callable[..., Path],
+        create_pyproject_toml: Callable[..., Path],
+    ) -> None:
+        """
+        Given multiple existing config sources with overlapping options,
+        When the `merge_configs` boolean is set to `True`,
+        Then the configs are merged from right to left
+        """
+        config_1_path = create_toml(
+            filename="config_1.toml", content={"option": {"nested_1": "config_1"}}
+        )
+        config_2_path = create_toml(
+            filename="config_2.toml", content={"option": {"nested_2": "config_2"}}
+        )
+        pyproject_path = create_pyproject_toml(
+            content={"option": {"nested_2": "config_3"}}
+        )
+
+        config = ProjectConfig(
+            project_name="foo",
+            source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
+            starting_path=pyproject_path,
+            merge_configs=True,
+        )
+
+        assert config.to_dict() == {
+            "option": {"nested_1": "config_1", "nested_2": "config_3"},
+        }
