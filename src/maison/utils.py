@@ -41,25 +41,24 @@ def get_file_path(
     if filename_path.is_absolute() and filename_path.is_file():
         return filename_path
 
-    for path in _generate_search_paths(starting_path=starting_path):
+    start = starting_path or Path.cwd()
+
+    for path in _generate_search_paths(starting_path=start):
         if path_contains_file(path=path, filename=filename):
             return path / filename
 
     return None
 
 
-def _generate_search_paths(
-    starting_path: Optional[Path] = None,
-) -> Generator[Path, None, None]:
-    """Generate paths from either a starting path or `Path.cwd()`.
+def _generate_search_paths(starting_path: Path) -> Generator[Path, None, None]:
+    """Generate paths from a starting path and traversing up the tree.
 
     Args:
-        starting_path: an optional starting path to start yielding search paths
+        starting_path: a starting path to start yielding search paths
 
     Yields:
-        a path
+        a path from the tree
     """
-    starting_path = starting_path or Path.cwd()
     for path in [starting_path, *starting_path.parents]:
         yield path
 
