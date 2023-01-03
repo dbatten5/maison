@@ -21,7 +21,7 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.7.1"
 click = "^8.0.1"
-pydantic = "^1.8.2"
+pydantic = "^1.10.4"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
@@ -31,7 +31,7 @@ coverage = {extras = ["toml"], version = "^6.1"}
 [tool.poetry.group.dev.dependencies]
 xdoctest = {extras = ["colors"], version = "^0.15.5"}
 typeguard = "^2.13.2"
-safety = "^1.10.3"
+safety = "^2.2.0"
 mypy = "^0.910"
 pre-commit = "^2.16.0"
 flake8 = "^4.0.1"
