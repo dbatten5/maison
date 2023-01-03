@@ -73,7 +73,7 @@ profile = "open_stack"
 
 [tool.ruff]
 ignore = [
-  'E501',
+  'B019',
   'D203',
   'D204',
   'D213',
@@ -84,7 +84,8 @@ ignore = [
   'D407',
   'D408',
   'D409',
-  'D413'
+  'D413',
+  'E501'
 ]
 line-length = 80
 select = [
