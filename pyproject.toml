@@ -10,7 +10,6 @@ repository = "https://github.com/dbatten5/maison"
 documentation = "https://dbatten5.github.io/maison"
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.6",
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
@@ -20,22 +19,24 @@ classifiers = [
 Changelog = "https://github.com/dbatten5/maison/releases"
 
 [tool.poetry.dependencies]
-python = "^3.6.1"
+python = "^3.7.1"
 click = "^8.0.1"
-pydantic = "^1.8.2"
+pydantic = "^1.10.4"
 toml = "^0.10.2"
 
-[tool.poetry.dev-dependencies]
+[tool.poetry.group.test.dependencies]
 pytest = "^6.2.4"
 coverage = {extras = ["toml"], version = "^6.1"}
-safety = "^1.10.3"
-mypy = "^0.910"
-typeguard = "^2.13.2"
+
+[tool.poetry.group.dev.dependencies]
 xdoctest = {extras = ["colors"], version = "^0.15.5"}
+typeguard = "^2.13.2"
+safety = "^2.2.0"
+mypy = "^0.910"
+black = "^22.12.0"
 pre-commit = "^2.16.0"
 flake8 = "^4.0.1"
-black = "^20.8b1"
-flake8-bandit = "^2.1.2"
+flake8-bandit = "<4.0.0"
 flake8-bugbear = "^21.11.29"
 flake8-docstrings = "^1.6.0"
 flake8-rst-docstrings = "^0.2.3"
@@ -65,6 +66,10 @@ pretty = true
 show_column_numbers = true
 show_error_codes = true
 show_error_context = true
+
+[[tool.mypy.overrides]]
+module = ["toml"]
+ignore_missing_imports = true
 
 [tool.isort]
 profile = "open_stack"

@@ -32,7 +32,7 @@ class TomlSource(BaseSource):
         """
         try:
             return dict(toml.load(self.filepath))
-        except toml.decoder.TomlDecodeError as exc:  # type: ignore
+        except toml.decoder.TomlDecodeError as exc:
             raise BadTomlError(
                 f"Error trying to load toml file '{self.filepath}'"
             ) from exc
