@@ -87,6 +87,5 @@ jobs:
           python-version: 3.x
       - run: pip install poetry
       - run: poetry config virtualenvs.create false --local
-      - run: poetry install
-      - run: pip install -r docs/requirements.txt
+      - run: poetry install --without test,dev
       - run: mkdocs gh-deploy --force
