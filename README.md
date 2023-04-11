@@ -47,6 +47,8 @@ like so:
 ```python
 from maison import ProjectConfig
 
+from my_useful_package import run_useful_action
+
 config = ProjectConfig(project_name="acme")
 
 if config.get_option("enable_useful_option"):
