@@ -40,7 +40,7 @@ darglint = "^1.8.0"
 reorder-python-imports = "^2.6.0"
 pre-commit-hooks = "^4.0.1"
 Pygments = "^2.9.0"
-ruff = "^0.0.209"
+ruff = "~0.0.1"
 pydocstyle = "^6.2.1"
 
 [tool.poetry.group.docs.dependencies]
@@ -82,10 +82,8 @@ show_error_context = true
 module = ["toml"]
 ignore_missing_imports = true
 
-[tool.isort]
-profile = "open_stack"
-
 [tool.ruff]
+src = ['src', 'tests']
 ignore = [
   'B019',
   'D203',
@@ -102,15 +100,32 @@ ignore = [
   'E501'
 ]
 line-length = 80
+target-version = 'py37'
 select = [
+    'A',
+    'ARG',
     'B',
     'B9',
+    'BLE',
     'C',
+    'C4',
     'D',
+    'DTZ',
     'E',
     'F',
+    'I',
     'N',
+    'PIE',
+    'PT',
+    'PTH',
+    'Q',
+    'RET',
     'S',
+    'SIM',
+    'SLF',
+    'T10',
+    'TCH',
+    'UP',
     'W',
 ]
 
@@ -120,10 +135,13 @@ max-complexity = 10
 [tool.ruff.pydocstyle]
 convention = 'google'
 
+[tool.ruff.isort]
+force-single-line = true
+
 [tool.ruff.per-file-ignores]
 "__init__.py" = ['F401']
 "tests/*" = [
-    'S101',
+    'S',
     'D212',
     'D415',
     'D205',

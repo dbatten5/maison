@@ -59,8 +59,7 @@ def _generate_search_paths(starting_path: Path) -> Generator[Path, None, None]:
     Yields:
         a path from the tree
     """
-    for path in [starting_path, *starting_path.parents]:
-        yield path
+    yield from [starting_path, *starting_path.parents]
 
 
 def _collect_configs(

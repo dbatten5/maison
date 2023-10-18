@@ -31,8 +31,7 @@ def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., P
     ) -> Path:
         content = content or {}
         config_toml = toml.dumps(content)
-        toml_path = create_tmp_file(content=config_toml, filename=filename)
-        return toml_path
+        return create_tmp_file(content=config_toml, filename=filename)
 
     return _create_toml
 
@@ -48,7 +47,6 @@ def create_pyproject_toml(create_toml: Callable[..., Path]) -> Callable[..., Pat
     ) -> Path:
         content = content or {"bar": "baz"}
         config_dict = {"tool": {section_name: content}}
-        pyproject_path = create_toml(filename=filename, content=config_dict)
-        return pyproject_path
+        return create_toml(filename=filename, content=config_dict)
 
     return _create_pyproject_toml

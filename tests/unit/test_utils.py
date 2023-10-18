@@ -6,9 +6,7 @@ from typing import Dict
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
-from pytest import mark
-from pytest import param
-from pytest import raises
+import pytest
 
 from maison.utils import deep_merge
 from maison.utils import get_file_path
@@ -125,16 +123,16 @@ class TestGetFilePath:
 class TestDeepMerge:
     """Tests for the `deep_merge` function."""
 
-    @mark.parametrize(
-        "a,b,expected",
+    @pytest.mark.parametrize(
+        ("a", "b", "expected"),
         [
-            param(
+            pytest.param(
                 {1: 2, 3: 4},
                 {3: 5, 6: 7},
                 {1: 2, 3: 5, 6: 7},
                 id="simple",
             ),
-            param(
+            pytest.param(
                 {1: 2, 3: {4: 5, 6: 7}},
                 {3: {6: 8, 9: 10}, 11: 12},
                 {1: 2, 3: {4: 5, 6: 8, 9: 10}, 11: 12},
@@ -165,5 +163,5 @@ class TestDeepMerge:
         dict_a = {1: 2, 2: 5}
         dict_b = {1: {3: 4}}
 
-        with raises(RuntimeError):
+        with pytest.raises(RuntimeError):
             deep_merge(dict_a, dict_b)
