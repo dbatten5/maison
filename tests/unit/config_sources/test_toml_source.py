@@ -4,7 +4,7 @@ from pathlib import Path
 from textwrap import dedent
 from typing import Callable
 
-from pytest import raises
+import pytest
 
 from maison.config_sources.toml_source import TomlSource
 from maison.errors import BadTomlError
@@ -44,5 +44,5 @@ class TestToDict:
         toml_source = TomlSource(filepath=toml_path, project_name="acme")
 
         error_regex = re.escape(f"Error trying to load toml file '{str(toml_path)}'")
-        with raises(BadTomlError, match=error_regex):
+        with pytest.raises(BadTomlError, match=error_regex):
             toml_source.to_dict()
