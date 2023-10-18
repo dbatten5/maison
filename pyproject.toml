@@ -29,7 +29,7 @@ pytest = "^6.2.4"
 coverage = {extras = ["toml"], version = "^6.1"}
 
 [tool.poetry.group.dev.dependencies]
-xdoctest = {extras = ["colors"], version = "^0.15.5"}
+xdoctest = {extras = ["colors"], version = ">=0.15.5,<1.2.0"}
 typeguard = "^2.13.2"
 safety = "^2.2.0"
 mypy = "^0.910"
