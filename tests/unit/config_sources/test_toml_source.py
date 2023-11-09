@@ -43,6 +43,6 @@ class TestToDict:
 
         toml_source = TomlSource(filepath=toml_path, project_name="acme")
 
-        error_regex = re.escape(f"Error trying to load toml file '{str(toml_path)}'")
+        error_regex = re.escape(f"Error trying to load toml file '{toml_path!s}'")
         with pytest.raises(BadTomlError, match=error_regex):
             toml_source.to_dict()

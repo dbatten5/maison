@@ -21,7 +21,7 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.7.1"
 click = "^8.0.1"
-pydantic = "^1.10.4"
+pydantic = "^1.10.13"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
@@ -35,13 +35,10 @@ safety = "^2.2.0"
 mypy = "^0.910"
 black = "^22.12.0"
 pre-commit = "^2.16.0"
-pep8-naming = "^0.12.0"
 darglint = "^1.8.0"
-reorder-python-imports = "^2.6.0"
 pre-commit-hooks = "^4.0.1"
 Pygments = "^2.9.0"
 ruff = "~0.0.1"
-pydocstyle = "^6.2.1"
 
 [tool.poetry.group.docs.dependencies]
 markdown-include = "^0.8.0"
@@ -49,7 +46,7 @@ mkdocs = "^1.4.2"
 mkdocs-autolinks-plugin = "^0.6.0"
 mkdocs-autorefs = "^0.4.1"
 mkdocs-git-revision-date-localized-plugin = "^1.1.0"
-mkdocs-htmlproofer-plugin = "^0.10.2"
+mkdocs-htmlproofer-plugin = "^0.10.3"
 mkdocs-material = "^9.0.1"
 mkdocs-material-extensions = "^1.1.1"
 mkdocs-minify-plugin = "^0.6.2"
@@ -86,20 +83,8 @@ ignore_missing_imports = true
 src = ['src', 'tests']
 ignore = [
   'B019',
-  'D203',
-  'D204',
-  'D213',
-  'D215',
-  'D400',
-  'D404',
-  'D406',
-  'D407',
-  'D408',
-  'D409',
-  'D413',
-  'E501'
 ]
-line-length = 80
+line-length = 88
 target-version = 'py37'
 select = [
     'A',
@@ -120,6 +105,7 @@ select = [
     'PTH',
     'Q',
     'RET',
+    'RUF',
     'S',
     'SIM',
     'SLF',
@@ -128,15 +114,6 @@ select = [
     'UP',
     'W',
 ]
-
-[tool.ruff.mccabe]
-max-complexity = 10
-
-[tool.ruff.pydocstyle]
-convention = 'google'
-
-[tool.ruff.isort]
-force-single-line = true
 
 [tool.ruff.per-file-ignores]
 "__init__.py" = ['F401']
@@ -147,6 +124,15 @@ force-single-line = true
     'D205',
     'D104',
 ]
+
+[tool.ruff.mccabe]
+max-complexity = 10
+
+[tool.ruff.pydocstyle]
+convention = 'google'
+
+[tool.ruff.isort]
+force-single-line = true
 
 [build-system]
 requires = ["poetry-core>=1.0.0"]
