@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "maison"
 version = "1.4.1"
-description = "Maison"
+description = "Read settings from config files"
 authors = ["Dom Batten <dominic.batten@googlemail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -13,6 +13,9 @@ classifiers = [
     "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
+]
+include = [
+  { path = "tests", format = "sdist" }
 ]
 
 [tool.poetry.urls]
