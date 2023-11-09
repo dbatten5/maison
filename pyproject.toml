@@ -21,7 +21,7 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.7.1"
 click = "^8.0.1"
-pydantic = "^1.10.4"
+pydantic = "^1.10.13"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
@@ -46,7 +46,7 @@ mkdocs = "^1.4.2"
 mkdocs-autolinks-plugin = "^0.6.0"
 mkdocs-autorefs = "^0.4.1"
 mkdocs-git-revision-date-localized-plugin = "^1.1.0"
-mkdocs-htmlproofer-plugin = "^0.10.2"
+mkdocs-htmlproofer-plugin = "^0.10.3"
 mkdocs-material = "^9.0.1"
 mkdocs-material-extensions = "^1.1.1"
 mkdocs-minify-plugin = "^0.6.2"
