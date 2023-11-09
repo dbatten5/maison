@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "maison"
 version = "1.4.1"
-description = "Maison"
+description = "Read settings from config files"
 authors = ["Dom Batten <dominic.batten@googlemail.com>"]
 license = "MIT"
 readme = "README.md"
