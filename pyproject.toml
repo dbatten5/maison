@@ -14,6 +14,9 @@ classifiers = [
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
+include = [
+  { path = "tests", format = "sdist" }
+]
 
 [tool.poetry.urls]
 Changelog = "https://github.com/dbatten5/maison/releases"
