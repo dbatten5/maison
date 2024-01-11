@@ -316,7 +316,7 @@ class TestValidation:
             and default values are used
         """
 
-        class Schema(ConfigSchema):
+        class Schema(ConfigSchema, coerce_numbers_to_str=True):
             """Defines schema."""
 
             bar: str
@@ -344,7 +344,7 @@ class TestValidation:
         Then the configuration is validated but values remain as in the config
         """
 
-        class Schema(ConfigSchema):
+        class Schema(ConfigSchema, coerce_numbers_to_str=True):
             """Defines schema."""
 
             bar: str

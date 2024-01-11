@@ -24,7 +24,7 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.7.1"
 click = "^8.0.1"
-pydantic = "^1.10.13"
+pydantic = "^2.5.3"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
