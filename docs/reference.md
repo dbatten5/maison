@@ -3,7 +3,7 @@
 ## Main API
 
 ```{eval-rst}
-.. automodule:: maison.config.ProjectConfig
+.. automodule:: maison.ProjectConfig
    :members:
    :imported-members:
    :special-members: __init__
