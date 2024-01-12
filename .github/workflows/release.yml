@@ -77,15 +77,3 @@ jobs:
           tag: ${{ steps.check-version.outputs.tag }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-  deploy-docs:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3.5.0
-      - uses: actions/setup-python@v4.4.0
-        with:
-          python-version: 3.x
-      - run: pip install poetry
-      - run: poetry config virtualenvs.create false --local
-      - run: poetry install --without test,dev
-      - run: mkdocs gh-deploy --force
