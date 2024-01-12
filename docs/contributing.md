@@ -28,7 +28,7 @@ git clone git@github.com:<your username>/maison.git
 cd maison
 ```
 
-You'll need `python` 3.7+ to run this package. You can follow
+You'll need `python` 3.8+ to run this package. You can follow
 the instructions [here](https://cookiecutter-hypermodern-python.readthedocs.io/en/2021.6.15/guide.html#getting-python)
 to install and use these versions.
 

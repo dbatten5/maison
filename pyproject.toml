@@ -10,7 +10,6 @@ repository = "https://github.com/dbatten5/maison"
 documentation = "https://dbatten5.github.io/maison"
 classifiers = [
     "Development Status :: 3 - Alpha",
-    "Programming Language :: Python :: 3.7",
     "Programming Language :: Python :: 3.8",
     "Programming Language :: Python :: 3.9",
 ]
@@ -22,7 +21,7 @@ include = [
 Changelog = "https://github.com/dbatten5/maison/releases"
 
 [tool.poetry.dependencies]
-python = "^3.7.1"
+python = "^3.8.1"
 click = "^8.0.1"
 pydantic = "^2.5.3"
 toml = "^0.10.2"
