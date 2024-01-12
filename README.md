@@ -62,3 +62,5 @@ See the [documentation](https://dbatten5.github.io/maison) for more details.
 ## Licence
 
 MIT
+
+<!-- github-only -->

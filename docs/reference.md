@@ -1,5 +1,17 @@
-::: maison.config.ProjectConfig
-    selection:
-      filters:
-        - "!^_"
-        - "^__init__$"
+# Reference
+
+## Main API
+
+```{eval-rst}
+.. automodule:: maison.config.ProjectConfig
+   :members:
+   :imported-members:
+   :special-members: __init__
+```
+
+## Exceptions
+
+```{eval-rst}
+.. automodule:: maison.errors
+   :members:
+```

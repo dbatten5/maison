@@ -1,4 +1,12 @@
-# Retrieving values
+# Usage
+
+## Retrieving values
+
+<!-- ```{eval-rst} -->
+<!-- .. click:: maison.__main__:main -->
+<!--     :prog: maison -->
+<!--     :nested: full -->
+<!-- ``` -->
 
 Once an instance of `ProjectConfig` has been created, values can be retrieved through:
 
@@ -23,7 +31,7 @@ options:
 {'foo': 'bar'}
 ```
 
-# Source files
+## Source files
 
 By default, `maison` will look for a `pyproject.toml` file. If you prefer to look
 elsewhere, provide a `source_files` list to `ProjectConfig` and `maison` will select the
@@ -42,12 +50,13 @@ print(config.config_path)
 #> PosixPath(/path/to/acme.ini)
 ```
 
-!!! warning ""
+```{caution}
     Currently only `.toml` and `.ini` files are supported. For `.ini` files,
     `maison` assumes that the whole file is relevant. For `pyproject.toml` files,
     `maison` assumes that the relevant section will be in a
     `[tool.{project_name}]` section. For other `.toml` files `maison` assumes the whole
     file is relevant.
+```
 
 To verify which source config file has been found, `ProjectConfig` exposes a
 `config_path` property:
@@ -71,7 +80,7 @@ print(config.config_path)
 #> PosixPath(/Users/tom.jones/.config/acme.ini)
 ```
 
-# Merging configs
+## Merging configs
 
 `maison` offers support for merging multiple configs. To do so, set the `merge_configs`
 flag to `True` in the constructor for `ProjectConfig`:
@@ -98,13 +107,14 @@ print(config.get_option("foo"))
 #> "bar"
 ```
 
-!!! warning ""
+```{warning}
     When merging configs, `maison` merges from **right to left**, ie. rightmost sources
     take precedence. So in the above example, if `~/config/.acme.toml` and
     `pyproject.toml` both set `nice_option`, the value from `pyproject.toml` will be
     returned from `config.get_option("nice_option")`.
+```
 
-# Search paths
+## Search paths
 
 By default, `maison` searches for config files by starting at `Path.cwd()` and moving up
 the tree until it finds the relevant config file or there are no more parent paths.
@@ -124,7 +134,7 @@ print(config.config_path)
 #> PosixPath(/some/other/path/pyproject.toml)
 ```
 
-# Validation
+## Validation
 
 `maison` offers optional schema validation using [pydantic](https://pydantic-docs.helpmanual.io/).
 
@@ -198,7 +208,7 @@ print(config.to_dict())
 If you prefer to keep the config values untouched and just perform simple validation,
 add a `use_schema_values=False` argument to the `validate` method.
 
-## Schema precedence
+### Schema precedence
 
 The `validate` method also accepts a `config_schema` is an argument. If one is provided here,
 it will be used instead of a schema passed as an init argument.

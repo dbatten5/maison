@@ -46,18 +46,11 @@ Pygments = "^2.9.0"
 ruff = "~0.0.1"
 
 [tool.poetry.group.docs.dependencies]
-markdown-include = "^0.8.0"
-mkdocs = "^1.4.2"
-mkdocs-autolinks-plugin = "^0.6.0"
-mkdocs-autorefs = "^0.4.1"
-mkdocs-git-revision-date-localized-plugin = "^1.1.0"
-mkdocs-htmlproofer-plugin = "^0.10.3"
-mkdocs-material = "^9.0.1"
-mkdocs-material-extensions = "^1.1.1"
-mkdocs-minify-plugin = "^0.6.2"
-mkdocs-section-index = "^0.3.4"
-mkdocstrings = "^0.23.0"
-mkdocstrings-python = "^1.8.0"
+sphinx = ">=4.3.2"
+sphinx-autobuild = ">=2021.3.14"
+sphinx-click = ">=3.0.2"
+myst-parser = {version = ">=0.16.1"}
+furo = ">=2021.11.12"
 
 [tool.poetry.scripts]
 maison = "maison.__main__:main"
