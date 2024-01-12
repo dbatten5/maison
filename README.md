@@ -57,7 +57,7 @@ if config.get_option("enable_useful_option"):
 
 ## Help
 
-See the [documentation](https://dbatten5.github.io/maison) for more details.
+See the [documentation](https://maison.readthedocs.io) for more details.
 
 ## Licence
 
