@@ -2,12 +2,6 @@
 
 ## Retrieving values
 
-<!-- ```{eval-rst} -->
-<!-- .. click:: maison.__main__:main -->
-<!--     :prog: maison -->
-<!--     :nested: full -->
-<!-- ``` -->
-
 Once an instance of `ProjectConfig` has been created, values can be retrieved through:
 
 ```python
