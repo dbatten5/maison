@@ -7,6 +7,8 @@
 
 Read configuration settings from configuration files.
 
+HELLO
+
 ## Motivation
 
 When developing a `python` package, e.g a command-line tool, it can be
