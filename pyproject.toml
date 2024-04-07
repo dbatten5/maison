@@ -25,7 +25,6 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.8.1"
 click = "^8.0.1"
-pydantic = "^2.5.3"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
@@ -41,6 +40,7 @@ black = "^22.12.0"
 pre-commit = "^2.16.0"
 darglint = "^1.8.0"
 pre-commit-hooks = "^4.0.1"
+pydantic = "^2.5.3"
 Pygments = "^2.9.0"
 ruff = "~0.0.1"
 
@@ -116,6 +116,7 @@ select = [
 "__init__.py" = ['F401']
 "tests/*" = [
     'S',
+    'D102',
     'D212',
     'D415',
     'D205',
