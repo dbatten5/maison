@@ -41,17 +41,17 @@ Suppose the following `pyproject.toml` lives somewhere in a project directory:
 enable_useful_option = true
 ```
 
-`maison` exposes a `ProjectConfig` class to retrieve values from config files
+`maison` exposes a `UserConfig` class to retrieve values from config files
 like so:
 
 ```python
-from maison import ProjectConfig
+from maison import UserConfig
 
 from my_useful_package import run_useful_action
 
-config = ProjectConfig(project_name="acme")
+config = UserConfig(project_name="acme")
 
-if config.get_option("enable_useful_option"):
+if config["enable_useful_option"]:
     run_useful_action()
 ```
 

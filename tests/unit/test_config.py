@@ -1,4 +1,5 @@
 """Tests for the `Config` classes."""
+
 from pathlib import Path
 from typing import Callable
 
@@ -6,7 +7,7 @@ import pytest
 from pydantic import BaseModel
 from pydantic import ValidationError
 
-from maison.configuration import UserConfig
+from maison.config import UserConfig
 from maison.errors import NoSchemaError
 
 

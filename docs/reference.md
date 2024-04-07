@@ -3,7 +3,7 @@
 ## Main API
 
 ```{eval-rst}
-.. autoclass:: maison.ProjectConfig
+.. autoclass:: maison.UserConfig
    :members:
 ```
 

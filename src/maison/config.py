@@ -1,4 +1,5 @@
 """Module to hold the `UserConfig` class definition."""
+
 from collections import UserDict
 from functools import reduce
 from pathlib import Path
@@ -24,7 +25,11 @@ class IsSchema(Protocol):
 
 
 class UserConfig(UserDict[str, Any]):
-    """Model the user configuration."""
+    """Model the user configuration.
+
+    `UserConfig` objects behave like dicts, so config values can be accessed the
+    same way as keys and values are accessed.
+    """
 
     def __init__(
         self,
