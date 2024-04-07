@@ -1,4 +1,5 @@
 """Module to hold various utils."""
+
 from pathlib import Path
 from typing import Any
 from typing import Dict
@@ -106,6 +107,10 @@ def _collect_configs(
             sources.append(IniSource(**source_kwargs))
 
     return sources
+
+
+def _thing() -> None:
+    ...
 
 
 def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any, Any]:
