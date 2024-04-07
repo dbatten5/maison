@@ -42,7 +42,7 @@ darglint = "^1.8.0"
 pre-commit-hooks = "^4.0.1"
 pydantic = "^2.5.3"
 Pygments = "^2.9.0"
-ruff = "~0.0.1"
+ruff = "^0.3.5"
 
 [tool.poetry.group.docs.dependencies]
 sphinx = ">=4.3.2"
@@ -78,11 +78,13 @@ ignore_missing_imports = true
 
 [tool.ruff]
 src = ['src', 'tests']
+line-length = 88
+target-version = 'py37'
+
+[tool.ruff.lint]
 ignore = [
   'B019',
 ]
-line-length = 88
-target-version = 'py37'
 select = [
     'A',
     'ARG',
@@ -112,7 +114,7 @@ select = [
     'W',
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ['F401']
 "tests/*" = [
     'S',
@@ -123,13 +125,13 @@ select = [
     'D104',
 ]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = 'google'
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-single-line = true
 
 [build-system]
