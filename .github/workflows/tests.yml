@@ -61,12 +61,9 @@ jobs:
           with open(os.environ["GITHUB_ENV"], mode="a") as io:
               print(f"VIRTUALENV_PIP={pip.__version__}", file=io)
 
-      - name: Print directory
-        run: |
-          ls -lAR .github
-
       - name: Install Poetry
         run: |
+          ls -lAR .github
           pipx install --pip-args=--constraint=.github/workflows/constraints.txt poetry
           poetry --version
 
