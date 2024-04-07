@@ -1,28 +1,37 @@
-"""Module to hold the `ProjectConfig` class definition."""
+"""Module to hold the `UserConfig` class definition."""
+from collections import UserDict
 from functools import reduce
 from pathlib import Path
 from typing import Any
 from typing import Dict
 from typing import List
 from typing import Optional
+from typing import Protocol
 from typing import Type
 from typing import Union
 
 from maison.errors import NoSchemaError
-from maison.schema import ConfigSchema
 from maison.utils import _collect_configs
 from maison.utils import deep_merge
 
 
-class ProjectConfig:
-    """Defines the `ProjectConfig` and provides accessors to get config values."""
+class IsSchema(Protocol):
+    """Protocol for config schemas."""
+
+    def dict(self) -> Dict[Any, Any]:
+        """Convert the validated config to a dict."""
+        ...
+
+
+class UserConfig(UserDict[str, Any]):
+    """Model the user configuration."""
 
     def __init__(
         self,
         project_name: str,
         starting_path: Optional[Path] = None,
         source_files: Optional[List[str]] = None,
-        config_schema: Optional[Type[ConfigSchema]] = None,
+        schema: Optional[Type[IsSchema]] = None,
         merge_configs: bool = False,
     ) -> None:
         """Initialize the config.
@@ -34,7 +43,7 @@ class ProjectConfig:
                 file
             source_files: an optional list of source config filenames or absolute paths
                 to search for. If none is provided then `pyproject.toml` will be used.
-            config_schema: an optional `pydantic` model to define the config schema
+            schema: an optional `pydantic` model to define the config schema
             merge_configs: an optional boolean to determine whether configs should be
                 merged if multiple are found
         """
@@ -45,24 +54,25 @@ class ProjectConfig:
             source_files=self.source_files,
             starting_path=starting_path,
         )
-        self._config_dict = self._generate_config_dict()
-        self._config_schema = config_schema
-
-    def __repr__(self) -> str:
-        """Return the __repr__.
-
-        Returns:
-            the representation
-        """
-        return f"<class '{self.__class__.__name__}'>"
+        self._schema = schema
+        super().__init__(**self._generate_config_dict())
 
     def __str__(self) -> str:
         """Return the __str__.
 
         Returns:
-            the representation
+            the string representation
         """
-        return self.__repr__()
+        return f"<class '{self.__class__.__name__}'>"
+
+    @property
+    def discovered_config_paths(self) -> List[Path]:
+        """Return a list of the paths to the config sources found on the filesystem.
+
+        Returns:
+            a list of the paths to the config sources
+        """
+        return [source.filepath for source in self._sources]
 
     @property
     def config_path(self) -> Optional[Union[Path, List[Path]]]:
@@ -82,39 +92,22 @@ class ProjectConfig:
         return self.discovered_config_paths[0]
 
     @property
-    def discovered_config_paths(self) -> List[Path]:
-        """Return a list of the paths to the config sources found on the filesystem.
+    def schema(self) -> Optional[Type[IsSchema]]:
+        """Return the schema.
 
         Returns:
-            a list of the paths to the config sources
+            the schema
         """
-        return [source.filepath for source in self._sources]
+        return self._schema
 
-    def to_dict(self) -> Dict[str, Any]:
-        """Return a dict of all the config options.
-
-        Returns:
-            a dict of the config options
-        """
-        return self._config_dict
-
-    @property
-    def config_schema(self) -> Optional[Type[ConfigSchema]]:
-        """Return the `config_schema`.
-
-        Returns:
-            the `config_schema`
-        """
-        return self._config_schema
-
-    @config_schema.setter
-    def config_schema(self, config_schema: Type[ConfigSchema]) -> None:
-        """Set the `config_schema`."""
-        self._config_schema = config_schema
+    @schema.setter
+    def schema(self, schema: Type[IsSchema]) -> None:
+        """Set the schema."""
+        self._schema = schema
 
     def validate(
         self,
-        config_schema: Optional[Type[ConfigSchema]] = None,
+        schema: Optional[Type[IsSchema]] = None,
         use_schema_values: bool = True,
     ) -> Dict[str, Any]:
         """Validate the configuration.
@@ -135,8 +128,9 @@ class ProjectConfig:
                 {"foo": "1"}
 
         Args:
-            config_schema: an optional `ConfigSchema` to define the schema. This
-                takes precedence over a schema provided at object instantiation.
+            schema: an optional class that follows the `IsSchema` protocol that
+                defines the schema. This takes precedence over a schema provided at
+                object instantiation.
             use_schema_values: an optional boolean to indicate whether the result
                 of passing the config through the schema should overwrite the existing
                 config values, meaning values are cast to types defined in the schema as
@@ -148,33 +142,19 @@ class ProjectConfig:
         Raises:
             NoSchemaError: when validation is attempted but no schema has been provided
         """
-        if not (config_schema or self.config_schema):
+        if not (schema or self.schema):
             raise NoSchemaError
 
-        schema: Type[ConfigSchema] = config_schema or self.config_schema  # type: ignore
+        selected_schema: Type[IsSchema] = schema or self.schema  # type: ignore
 
-        validated_schema = schema(**self._config_dict)
+        validated_schema = selected_schema(**self.data)
 
         if use_schema_values:
-            self._config_dict = validated_schema.dict()
+            self.update(validated_schema.dict())
 
-        return self._config_dict
+        return self.data
 
-    def get_option(
-        self, option_name: str, default_value: Optional[Any] = None
-    ) -> Optional[Any]:
-        """Return the value of a config option.
-
-        Args:
-            option_name: the config option for which to return the value
-            default_value: an option default value if the option isn't set
-
-        Returns:
-            The value of the given config option or `None` if it doesn't exist
-        """
-        return self._config_dict.get(option_name, default_value)
-
-    def _generate_config_dict(self) -> Dict[Any, Any]:
+    def _generate_config_dict(self) -> Dict[str, Any]:
         """Generate the project config dict.
 
         If `merge_configs` is set to `False` then we use the first config. If `True`
@@ -189,5 +169,5 @@ class ProjectConfig:
         if not self.merge_configs:
             return self._sources[0].to_dict()
 
-        source_dicts = [source.to_dict() for source in self._sources]
+        source_dicts = (source.to_dict() for source in self._sources)
         return reduce(lambda a, b: deep_merge(a, b), source_dicts)
