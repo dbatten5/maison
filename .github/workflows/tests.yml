@@ -63,7 +63,7 @@ jobs:
 
       - name: Print directory
         run: |
-          ls -lA
+          ls -lAR .github
 
       - name: Install Poetry
         run: |
