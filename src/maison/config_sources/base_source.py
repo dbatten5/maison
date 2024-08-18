@@ -10,16 +10,16 @@ from typing import Dict
 class BaseSource(ABC):
     """Base class from which concrete source abstractions extend."""
 
-    def __init__(self, filepath: Path, project_name: str) -> None:
+    def __init__(self, filepath: Path, package_name: str) -> None:
         """Initialize the object.
 
         Args:
             filepath: the `Path` to the config file
-            project_name: the name of the project, used to pick out the relevant section
+            package_name: the name of the package, used to pick out the relevant section
                 in a `.toml` or `.ini` file
         """
         self.filepath = filepath
-        self.project_name = project_name
+        self.package_name = package_name
 
     def __repr__(self) -> str:
         """Return the __repr__.

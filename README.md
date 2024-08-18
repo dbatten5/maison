@@ -9,11 +9,11 @@ Read configuration settings from configuration files.
 
 ## Motivation
 
-When developing a `python` package, e.g a command-line tool, it can be
-helpful to allow the user to set their own configuration options to allow them
-to tailor the tool to their needs. These options are typically set in files in
-the root of a project directory that uses the tool, for example in a
-`pyproject.toml` or an `{project_name}.ini` file.
+When developing a `python` package, e.g a command-line tool, it can be helpful
+to allow the user to set their own configuration options to allow them to tailor
+the tool to their needs. These options are typically set in files in the root of
+a user's directory that uses the tool, for example in a `pyproject.toml` or an
+`{project_name}.ini` file.
 
 `maison` aims to provide a simple and flexible way to read and validate those
 configuration options so that they may be used in the package.
@@ -34,7 +34,7 @@ pip install maison
 
 ## Usage
 
-Suppose the following `pyproject.toml` lives somewhere in a project directory:
+Suppose the following `pyproject.toml` lives somewhere in a user's directory:
 
 ```toml
 [tool.acme]
@@ -49,7 +49,7 @@ from maison import UserConfig
 
 from my_useful_package import run_useful_action
 
-config = UserConfig(project_name="acme")
+config = UserConfig(package_name="acme")
 
 if config.values["enable_useful_option"]:
     run_useful_action()

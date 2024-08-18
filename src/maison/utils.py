@@ -64,14 +64,14 @@ def _generate_search_paths(starting_path: Path) -> Generator[Path, None, None]:
 
 
 def _collect_configs(
-    project_name: str,
+    package_name: str,
     source_files: List[str],
     starting_path: Optional[Path] = None,
 ) -> List[BaseSource]:
     """Collect configs and return them in a list.
 
     Args:
-        project_name: the name of the project to be used to find the right section in
+        package_name: the name of the package to be used to find the right section in
             the config file
         source_files: a list of source config filenames to look for.
         starting_path: an optional starting path to start the search
@@ -94,7 +94,7 @@ def _collect_configs(
         # https://github.com/python/mypy/issues/5382#issuecomment-583901369
         source_kwargs: Dict[str, Any] = {
             "filepath": file_path,
-            "project_name": project_name,
+            "package_name": package_name,
         }
 
         if source.endswith("toml"):

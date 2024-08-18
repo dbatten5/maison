@@ -14,7 +14,7 @@ allows config values to be retrieved:
 
 ```python
 >>> from maison import UserConfig
->>> config = UserConfig(project_name="acme")
+>>> config = UserConfig(package_name="acme")
 >>> config.values
 "{'foo': 'bar'}"
 >>> config.values["foo"]
@@ -35,7 +35,7 @@ first source file it finds from the list.
 from maison import UserConfig
 
 config = UserConfig(
-  project_name="acme",
+  package_name="acme",
   source_files=["acme.ini", "pyproject.toml"]
 )
 
@@ -47,7 +47,7 @@ print(config.path)
 Currently only `.toml` and `.ini` files are supported. For `.ini` files,
 `maison` assumes that the whole file is relevant. For `pyproject.toml` files,
 `maison` assumes that the relevant section will be in a
-`[tool.{project_name}]` section. For other `.toml` files `maison` assumes the whole
+`[tool.{package_name}]` section. For other `.toml` files `maison` assumes the whole
 file is relevant.
 ```
 
@@ -65,7 +65,7 @@ The source file can either be a filename or an absolute path to a config:
 from maison import UserConfig
 
 config = UserConfig(
-  project_name="acme",
+  package_name="acme",
   source_files=["~/.config/acme.ini", "pyproject.toml"]
 )
 
@@ -82,7 +82,7 @@ flag to `True` in the constructor for `UserConfig`:
 from maison import UserConfig
 
 config = UserConfig(
-  project_name="acme",
+  package_name="acme",
   source_files=["~/.config/acme.toml", "~/.acme.ini", "pyproject.toml"],
   merge_configs=True
 )
@@ -119,7 +119,7 @@ You can start searching from a different path by providing a `starting_path` pro
 from maison import UserConfig
 
 config = UserConfig(
-  project_name="acme",
+  package_name="acme",
   starting_path=Path("/some/other/path")
 )
 
@@ -154,7 +154,7 @@ Then inject the schema when instantiating a `UserConfig`:
 ```python
 from maison import UserConfig
 
-config = UserConfig(project_name="acme", schema=MySchema)
+config = UserConfig(package_name="acme", schema=MySchema)
 ```
 
 To validate the config, simply run `validate()` on the config instance:
@@ -195,7 +195,7 @@ class MySchema(BaseModel):
 Running the config through validation will render the following:
 
 ```python
-config = UserConfig(project_name="acme", schema=MySchema)
+config = UserConfig(package_name="acme", schema=MySchema)
 
 print(config)
 #> {"foo": 1}

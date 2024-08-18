@@ -17,7 +17,7 @@ class TestUserConfig:
     def test_str(self, create_tmp_file: Callable[..., Path]) -> None:
         pyproject_path = create_tmp_file(filename="pyproject.toml")
 
-        config = UserConfig(project_name="foo", starting_path=pyproject_path)
+        config = UserConfig(package_name="foo", starting_path=pyproject_path)
 
         assert str(config) == "<class 'UserConfig'>"
 
@@ -29,7 +29,7 @@ class TestDictObject:
         """A valid pyproject is parsed to a dict object."""
         pyproject_path = create_pyproject_toml()
 
-        config = UserConfig(project_name="foo", starting_path=pyproject_path)
+        config = UserConfig(package_name="foo", starting_path=pyproject_path)
 
         assert config.values == {"bar": "baz"}
 
@@ -39,7 +39,7 @@ class TestSourceFiles:
 
     def test_not_found(self) -> None:
         """Non existent source files are handled."""
-        config = UserConfig(project_name="foo", source_files=["foo"])
+        config = UserConfig(package_name="foo", source_files=["foo"])
 
         assert config.path is None
         assert config.values == {}
@@ -51,7 +51,7 @@ class TestSourceFiles:
         """Unrecognised source file extensions are handled."""
         source_path = create_tmp_file(filename="foo.txt")
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=["foo.txt"],
             starting_path=source_path,
         )
@@ -64,7 +64,7 @@ class TestSourceFiles:
         source_path = create_toml(filename="another.toml", content={"bar": "baz"})
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=source_path,
             source_files=["another.toml"],
         )
@@ -85,7 +85,7 @@ class TestSourceFiles:
         )
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=source_path_2,
             source_files=["another.toml", "pyproject.toml"],
         )
@@ -98,7 +98,7 @@ class TestSourceFiles:
         path = create_tmp_file(filename="acme.ini")
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=[str(path)],
         )
 
@@ -112,7 +112,7 @@ class TestSourceFiles:
         pyproject_path = create_pyproject_toml()
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=["~/.config/acme.ini", "pyproject.toml"],
             starting_path=pyproject_path,
         )
@@ -133,7 +133,7 @@ option_2 = value_2
         """
         source_path = create_tmp_file(content=ini_file, filename="foo.ini")
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=source_path,
             source_files=["foo.ini"],
         )
@@ -149,7 +149,7 @@ class TestValidation:
     """Tests for schema validation."""
 
     def test_no_schema(self) -> None:
-        config = UserConfig(project_name="acme", starting_path=Path("/"))
+        config = UserConfig(package_name="acme", starting_path=Path("/"))
 
         assert config.values == {}
 
@@ -169,7 +169,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml()
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
             schema=Schema,
         )
@@ -191,7 +191,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml()
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
         )
 
@@ -213,7 +213,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml(content={"bar": 1})
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
             schema=Schema,
         )
@@ -237,7 +237,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml(content={"bar": 1})
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
             schema=Schema,
         )
@@ -265,7 +265,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml(content={"baz": "baz"})
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
             schema=InitSchema,
         )
@@ -287,7 +287,7 @@ class TestValidation:
 
         pyproject_path = create_pyproject_toml(content={"baz": "baz"})
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             starting_path=pyproject_path,
             schema=Schema,
         )
@@ -301,7 +301,7 @@ class TestValidation:
         class Schema(BaseModel):
             """Defines schema."""
 
-        config = UserConfig(project_name="foo")
+        config = UserConfig(package_name="foo")
 
         assert config.schema is None
 
@@ -329,7 +329,7 @@ option_2 = true
         pyproject_path = create_pyproject_toml(content={"option_3": True})
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
             starting_path=pyproject_path,
             merge_configs=True,
@@ -359,7 +359,7 @@ option_2 = true
         pyproject_path = create_pyproject_toml(content={"option": "config_3"})
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
             starting_path=pyproject_path,
             merge_configs=True,
@@ -386,7 +386,7 @@ option_2 = true
         )
 
         config = UserConfig(
-            project_name="foo",
+            package_name="foo",
             source_files=[str(config_1_path), str(config_2_path), "pyproject.toml"],
             starting_path=pyproject_path,
             merge_configs=True,

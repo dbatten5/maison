@@ -27,7 +27,7 @@ class UserConfig:
 
     def __init__(
         self,
-        project_name: str,
+        package_name: str,
         starting_path: Optional[Path] = None,
         source_files: Optional[List[str]] = None,
         schema: Optional[Type[_IsSchema]] = None,
@@ -36,7 +36,7 @@ class UserConfig:
         """Initialize the config.
 
         Args:
-            project_name: the name of the project, to be used to find the right section
+            package_name: the name of the package, to be used to find the right section
                 in the config file
             starting_path: an optional starting path to start the search for config
                 file
@@ -49,7 +49,7 @@ class UserConfig:
         self.source_files = source_files or ["pyproject.toml"]
         self.merge_configs = merge_configs
         self._sources = _collect_configs(
-            project_name=project_name,
+            package_name=package_name,
             source_files=self.source_files,
             starting_path=starting_path,
         )
@@ -168,13 +168,13 @@ class UserConfig:
         return self.values
 
     def _generate_config_dict(self) -> Dict[str, Any]:
-        """Generate the project config dict.
+        """Generate the config dict.
 
         If `merge_configs` is set to `False` then we use the first config. If `True`
         then the dicts of the sources are merged from right to left.
 
         Returns:
-            the project config dict
+            the config dict
         """
         if len(self._sources) == 0:
             return {}
