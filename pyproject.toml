@@ -24,7 +24,6 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 [tool.poetry.dependencies]
 python = "^3.9.1"
 click = "^8.0.1"
-pydantic = "^2.5.3"
 toml = "^0.10.2"
 
 [tool.poetry.group.test.dependencies]
@@ -75,11 +74,13 @@ ignore_missing_imports = true
 
 [tool.ruff]
 src = ['src', 'tests']
+line-length = 88
+target-version = 'py37'
+
+[tool.ruff.lint]
 ignore = [
   'B019',
 ]
-line-length = 88
-target-version = 'py37'
 select = [
     'A',
     'ARG',
@@ -109,23 +110,24 @@ select = [
     'W',
 ]
 
-[tool.ruff.per-file-ignores]
+[tool.ruff.lint.per-file-ignores]
 "__init__.py" = ['F401']
 "tests/*" = [
     'S',
+    'D102',
     'D212',
     'D415',
     'D205',
     'D104',
 ]
 
-[tool.ruff.mccabe]
+[tool.ruff.lint.mccabe]
 max-complexity = 10
 
-[tool.ruff.pydocstyle]
+[tool.ruff.lint.pydocstyle]
 convention = 'google'
 
-[tool.ruff.isort]
+[tool.ruff.lint.isort]
 force-single-line = true
 
 [build-system]

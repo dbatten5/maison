@@ -118,7 +118,6 @@ def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any,
     >>> deep_merge(a, b) == {
     ...     "first": {"all_rows": {"pass": "dog", "fail": "cat", "number": "5"}}
     ... }
-    True
 
     Note that the arguments may be modified!
 
