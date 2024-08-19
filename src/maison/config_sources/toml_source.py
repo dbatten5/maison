@@ -21,7 +21,7 @@ class TomlSource(BaseSource):
         """
         return self._load_file()
 
-    @lru_cache()
+    @lru_cache
     def _load_file(self) -> Dict[Any, Any]:
         """Load the `.toml` file.
 

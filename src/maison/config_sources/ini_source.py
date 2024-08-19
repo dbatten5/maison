@@ -20,7 +20,7 @@ class IniSource(BaseSource):
         config = self._load_file()
         return {section: dict(config.items(section)) for section in config.sections()}
 
-    @lru_cache()
+    @lru_cache
     def _load_file(self) -> ConfigParser:
         """Load the `.ini` file.
 
