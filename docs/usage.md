@@ -132,7 +132,7 @@ print(config.path)
 `maison` offers optional schema validation.
 
 To validate a configuration, first create a schema. The schema should implement
-a method called `dict`. This can be achieved by writing the schema as a
+a method called `model_dump`. This can be achieved by writing the schema as a
 `pydantic` model:
 
 ```python
