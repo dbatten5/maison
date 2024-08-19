@@ -18,7 +18,7 @@ from maison.utils import deep_merge
 class _IsSchema(Protocol):
     """Protocol for config schemas."""
 
-    def dict(self) -> Dict[Any, Any]:
+    def model_dump(self) -> Dict[Any, Any]:
         """Convert the validated config to a dict."""
 
 
@@ -163,7 +163,7 @@ class UserConfig:
         validated_schema = selected_schema(**self.values)
 
         if use_schema_values:
-            self.values = validated_schema.dict()
+            self.values = validated_schema.model_dump()
 
         return self.values
 
