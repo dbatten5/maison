@@ -5,6 +5,7 @@ from typing import Callable
 
 import pytest
 from pydantic import BaseModel
+from pydantic import ConfigDict
 from pydantic import ValidationError
 
 from maison.config import UserConfig
@@ -205,8 +206,10 @@ class TestValidation:
     ) -> None:
         """Config values can be cast to the validated values."""
 
-        class Schema(BaseModel, coerce_numbers_to_str=True):
+        class Schema(BaseModel):
             """Defines schema."""
+
+            model_config = ConfigDict(coerce_numbers_to_str=True)
 
             bar: str
             other: str = "hello"
@@ -229,8 +232,10 @@ class TestValidation:
     ) -> None:
         """If `use_schema_values` is set to False then don't use validated values."""
 
-        class Schema(BaseModel, coerce_numbers_to_str=True):
+        class Schema(BaseModel):
             """Defines schema."""
+
+            model_config = ConfigDict(coerce_numbers_to_str=True)
 
             bar: str
             other: str = "hello"

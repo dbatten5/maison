@@ -174,7 +174,7 @@ be raised. A schema can be added after instantiation through a setter:
 config.schema = MySchema
 ```
 
-## Casting and default values
+### Casting and default values
 
 By default, `maison` will replace the values in the config with whatever comes back from
 the validation. For example, for a config file that looks like this:
@@ -187,7 +187,11 @@ foo = 1
 And a schema that looks like this:
 
 ```python
+from pydantic import BaseModel, ConfigDict
+
 class MySchema(BaseModel):
+  model_config = ConfigDict(coerce_numbers_to_str=True)
+
   foo: str
   bar: str = "my_default"
 ```
