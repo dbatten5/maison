@@ -1,6 +1,5 @@
 """Maison."""
 
-from .config import ProjectConfig
-from .schema import ConfigSchema
+from .config import UserConfig
 
-__all__ = ["ProjectConfig", "ConfigSchema"]
+__all__ = ["UserConfig"]

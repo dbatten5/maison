@@ -10,11 +10,7 @@ class TestToDict:
     """Tests for the `to_dict` method."""
 
     def test_success(self, create_tmp_file: Callable[..., Path]) -> None:
-        """
-        Given an instance of `IniSource` instantiated with a `.ini` file,
-        When the `to_dict` method is called,
-        Then the `.ini` is loaded and converted to a `dict`
-        """
+        """A `.ini` file is converted to a `dict`"""
         ini_file = """
 [section 1]
 option_1 = value_1
@@ -24,7 +20,7 @@ option_2 = value_2
         """
         ini_path = create_tmp_file(content=ini_file, filename="foo.ini")
 
-        toml_source = IniSource(filepath=ini_path, project_name="acme")
+        toml_source = IniSource(filepath=ini_path, package_name="acme")
 
         assert toml_source.to_dict() == {
             "section 1": {"option_1": "value_1"},
@@ -32,13 +28,9 @@ option_2 = value_2
         }
 
     def test_empty_file(self, create_tmp_file: Callable[..., Path]) -> None:
-        """
-        Given an instance of `IniSource` instantiated with an empty `.ini` file,
-        When the `to_dict` method is called,
-        Then an empty `dict` is returned
-        """
+        """Empty `.ini` returns an empty dict"""
         ini_path = create_tmp_file(filename="foo.ini")
 
-        toml_source = IniSource(filepath=ini_path, project_name="acme")
+        toml_source = IniSource(filepath=ini_path, package_name="acme")
 
         assert toml_source.to_dict() == {}
