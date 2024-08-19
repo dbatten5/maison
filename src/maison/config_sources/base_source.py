@@ -1,4 +1,5 @@
 """Module to hold the `BaseSource` abstract class definition."""
+
 from abc import ABC
 from abc import abstractmethod
 from pathlib import Path

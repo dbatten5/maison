@@ -1,4 +1,5 @@
 """Tests for the `PyprojectSource` class."""
+
 from pathlib import Path
 from typing import Callable
 

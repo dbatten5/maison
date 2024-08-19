@@ -1,4 +1,5 @@
 """Module to hold the `ProjectConfig` class definition."""
+
 from functools import reduce
 from pathlib import Path
 from typing import Any

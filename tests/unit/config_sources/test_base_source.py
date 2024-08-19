@@ -1,4 +1,5 @@
 """Tests for the `BaseSource` class."""
+
 from pathlib import Path
 from typing import Any
 from typing import Callable

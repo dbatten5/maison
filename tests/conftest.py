@@ -1,4 +1,5 @@
 """Store the classes and fixtures used throughout the tests."""
+
 from pathlib import Path
 from typing import Any
 from typing import Callable

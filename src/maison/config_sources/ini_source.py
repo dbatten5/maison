@@ -1,4 +1,5 @@
 """Module to hold the `IniSource` class definition."""
+
 from configparser import ConfigParser
 from functools import lru_cache
 from typing import Any
