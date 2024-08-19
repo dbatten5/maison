@@ -30,6 +30,7 @@ toml = "^0.10.2"
 pytest = "^8.3.0"
 pydantic = "^2.8.2"
 coverage = {extras = ["toml"], version = "^7.4.0"}
+six = "^1.16.0"
 
 [tool.poetry.group.dev.dependencies]
 typeguard = "^4.1.5"
