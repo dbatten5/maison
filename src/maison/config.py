@@ -155,7 +155,7 @@ class UserConfig:
         Raises:
             NoSchemaError: when validation is attempted but no schema has been provided
         """
-        selected_schema: Type[_IsSchema] | None = schema or self.schema  # type: ignore
+        selected_schema: Union[Type[_IsSchema], None] = schema or self.schema
 
         if not selected_schema:
             raise NoSchemaError
