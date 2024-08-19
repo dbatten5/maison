@@ -1,4 +1,5 @@
 """Tests for the `TomlSource` class."""
+
 import re
 from pathlib import Path
 from textwrap import dedent

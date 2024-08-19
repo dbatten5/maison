@@ -1,4 +1,5 @@
 """Module to define the `ConfigSchema` class."""
+
 from pydantic import BaseModel
 
 

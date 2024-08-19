@@ -1,4 +1,5 @@
 """Tests for the `Config` classes."""
+
 from pathlib import Path
 from typing import Callable
 

@@ -1,4 +1,5 @@
 """Sphinx configuration."""
+
 project = "Maison"
 author = "Dom Batten"
 copyright = "2021, Dom Batten"  # noqa: A001

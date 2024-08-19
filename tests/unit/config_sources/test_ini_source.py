@@ -1,4 +1,5 @@
 """Tests for the `IniSource` class."""
+
 from pathlib import Path
 from typing import Callable
 
