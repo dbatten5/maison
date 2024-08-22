@@ -43,7 +43,7 @@ Pygments = "^2.18.0"
 ruff = "^0.1.13"
 
 [tool.poetry.group.docs.dependencies]
-sphinx = "^6.0.0"
+sphinx = ">=6,<8"
 sphinx-autobuild = ">=2024.4.16"
 sphinx-click = ">=3.0.2"
 myst-parser = "2.0.0"
