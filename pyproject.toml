@@ -25,6 +25,9 @@ Changelog = "https://github.com/dbatten5/maison/releases"
 python = "^3.9.1"
 click = "^8.0.1"
 rtoml = "^0.12.0"
+jinja2 = "^3.1.6"
+starlette = "^0.40.0"
+virtualenv = "^20.26.6"
 
 [tool.poetry.group.test.dependencies]
 pytest = "^8.3.0"
