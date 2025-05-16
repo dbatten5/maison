@@ -4,7 +4,7 @@ from functools import lru_cache
 from typing import Any
 from typing import Dict
 
-import toml
+import rtoml
 
 from ..errors import BadTomlError
 from .base_source import BaseSource
@@ -32,8 +32,8 @@ class TomlSource(BaseSource):
             BadTomlError: If toml cannot be parsed
         """
         try:
-            return dict(toml.load(self.filepath))
-        except toml.decoder.TomlDecodeError as exc:
+            return dict(rtoml.load(self.filepath))
+        except rtoml.TomlParsingError as exc:
             raise BadTomlError(
                 f"Error trying to load toml file '{self.filepath}'"
             ) from exc

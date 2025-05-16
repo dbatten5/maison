@@ -7,7 +7,7 @@ from typing import Dict
 from typing import Optional
 
 import pytest
-import toml
+import rtoml
 
 
 @pytest.fixture(name="create_tmp_file")
@@ -31,13 +31,13 @@ def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., P
         content: Optional[Dict[str, Any]] = None,
     ) -> Path:
         content = content or {}
-        config_toml = toml.dumps(content)
+        config_toml = rtoml.dumps(content)
         return create_tmp_file(content=config_toml, filename=filename)
 
     return _create_toml
 
 
-@pytest.fixture()
+@pytest.fixture
 def create_pyproject_toml(create_toml: Callable[..., Path]) -> Callable[..., Path]:
     """Fixture for creating a `pyproject.toml`."""
 
