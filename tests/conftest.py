@@ -37,7 +37,7 @@ def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., P
     return _create_toml
 
 
-@pytest.fixture
+@pytest.fixture()
 def create_pyproject_toml(create_toml: Callable[..., Path]) -> Callable[..., Path]:
     """Fixture for creating a `pyproject.toml`."""
 
