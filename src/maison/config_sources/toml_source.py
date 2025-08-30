@@ -1,10 +1,13 @@
 """Module to hold the `TomlSource` class definition."""
 
+try:
+    import tomllib
+except ImportError:
+    import tomli as tomllib
+
 from functools import lru_cache
 from typing import Any
 from typing import Dict
-
-import toml
 
 from ..errors import BadTomlError
 from .base_source import BaseSource
@@ -32,8 +35,9 @@ class TomlSource(BaseSource):
             BadTomlError: If toml cannot be parsed
         """
         try:
-            return dict(toml.load(self.filepath))
-        except toml.decoder.TomlDecodeError as exc:
+            with open(self.filepath, 'rb') as fd:
+                return dict(tomllib.load(fd))
+        except tomllib.TOMLDecodeError as exc:
             raise BadTomlError(
                 f"Error trying to load toml file '{self.filepath}'"
             ) from exc
