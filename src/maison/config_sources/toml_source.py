@@ -7,7 +7,6 @@ except ImportError:
 
 from functools import lru_cache
 from typing import Any
-from typing import Dict
 
 from ..errors import BadTomlError
 from .base_source import BaseSource
@@ -16,7 +15,7 @@ from .base_source import BaseSource
 class TomlSource(BaseSource):
     """Class to represent a `.toml` config source."""
 
-    def to_dict(self) -> Dict[Any, Any]:
+    def to_dict(self) -> dict[Any, Any]:
         """Convert the source config file to a dict.
 
         Returns:
@@ -25,7 +24,7 @@ class TomlSource(BaseSource):
         return self._load_file()
 
     @lru_cache
-    def _load_file(self) -> Dict[Any, Any]:
+    def _load_file(self) -> dict[Any, Any]:
         """Load the `.toml` file.
 
         Returns:

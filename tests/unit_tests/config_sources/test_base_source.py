@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import Any
 from typing import Callable
-from typing import Dict
 
 from maison.config_sources.base_source import BaseSource
 
@@ -11,7 +10,7 @@ from maison.config_sources.base_source import BaseSource
 class ConcreteSource(BaseSource):
     """Concretion of `BaseSource` for testing purposes"""
 
-    def to_dict(self) -> Dict[Any, Any]:
+    def to_dict(self) -> dict[Any, Any]:
         """Return a dict."""
         return {}
 

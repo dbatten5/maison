@@ -3,11 +3,8 @@
 from functools import reduce
 from pathlib import Path
 from typing import Any
-from typing import Dict
-from typing import List
 from typing import Optional
 from typing import Protocol
-from typing import Type
 from typing import Union
 
 from maison.errors import NoSchemaError
@@ -18,8 +15,9 @@ from maison.utils import deep_merge
 class _IsSchema(Protocol):
     """Protocol for config schemas."""
 
-    def model_dump(self) -> Dict[Any, Any]:
+    def model_dump(self) -> dict[Any, Any]:
         """Convert the validated config to a dict."""
+        ...
 
 
 class UserConfig:
@@ -29,8 +27,8 @@ class UserConfig:
         self,
         package_name: str,
         starting_path: Optional[Path] = None,
-        source_files: Optional[List[str]] = None,
-        schema: Optional[Type[_IsSchema]] = None,
+        source_files: Optional[list[str]] = None,
+        schema: Optional[type[_IsSchema]] = None,
         merge_configs: bool = False,
     ) -> None:
         """Initialize the config.
@@ -65,7 +63,7 @@ class UserConfig:
         return f"<class '{self.__class__.__name__}'>"
 
     @property
-    def values(self) -> Dict[str, Any]:
+    def values(self) -> dict[str, Any]:
         """Return the user's configuration values.
 
         Returns:
@@ -74,12 +72,12 @@ class UserConfig:
         return self._values
 
     @values.setter
-    def values(self, values: Dict[str, Any]) -> None:
+    def values(self, values: dict[str, Any]) -> None:
         """Set the user's configuration values."""
         self._values = values
 
     @property
-    def discovered_paths(self) -> List[Path]:
+    def discovered_paths(self) -> list[Path]:
         """Return a list of the paths to the config sources found on the filesystem.
 
         Returns:
@@ -88,7 +86,7 @@ class UserConfig:
         return [source.filepath for source in self._sources]
 
     @property
-    def path(self) -> Optional[Union[Path, List[Path]]]:
+    def path(self) -> Optional[Union[Path, list[Path]]]:
         """Return the path to the selected config source.
 
         Returns:
@@ -105,7 +103,7 @@ class UserConfig:
         return self.discovered_paths[0]
 
     @property
-    def schema(self) -> Optional[Type[_IsSchema]]:
+    def schema(self) -> Optional[type[_IsSchema]]:
         """Return the schema.
 
         Returns:
@@ -114,15 +112,15 @@ class UserConfig:
         return self._schema
 
     @schema.setter
-    def schema(self, schema: Type[_IsSchema]) -> None:
+    def schema(self, schema: type[_IsSchema]) -> None:
         """Set the schema."""
         self._schema = schema
 
     def validate(
         self,
-        schema: Optional[Type[_IsSchema]] = None,
+        schema: Optional[type[_IsSchema]] = None,
         use_schema_values: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Validate the configuration.
 
         Warning:
@@ -155,7 +153,7 @@ class UserConfig:
         Raises:
             NoSchemaError: when validation is attempted but no schema has been provided
         """
-        selected_schema: Union[Type[_IsSchema], None] = schema or self.schema
+        selected_schema: Union[type[_IsSchema], None] = schema or self.schema
 
         if not selected_schema:
             raise NoSchemaError
@@ -167,7 +165,7 @@ class UserConfig:
 
         return self.values
 
-    def _generate_config_dict(self) -> Dict[str, Any]:
+    def _generate_config_dict(self) -> dict[str, Any]:
         """Generate the config dict.
 
         If `merge_configs` is set to `False` then we use the first config. If `True`

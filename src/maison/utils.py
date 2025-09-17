@@ -1,10 +1,8 @@
 """Module to hold various utils."""
 
+from collections.abc import Generator
 from pathlib import Path
 from typing import Any
-from typing import Dict
-from typing import Generator
-from typing import List
 from typing import Optional
 
 from maison.config_sources.base_source import BaseSource
@@ -65,9 +63,9 @@ def _generate_search_paths(starting_path: Path) -> Generator[Path, None, None]:
 
 def _collect_configs(
     package_name: str,
-    source_files: List[str],
+    source_files: list[str],
     starting_path: Optional[Path] = None,
-) -> List[BaseSource]:
+) -> list[BaseSource]:
     """Collect configs and return them in a list.
 
     Args:
@@ -79,7 +77,7 @@ def _collect_configs(
     Returns:
         a list of the found config sources
     """
-    sources: List[BaseSource] = []
+    sources: list[BaseSource] = []
 
     for source in source_files:
         file_path = get_file_path(
@@ -90,9 +88,9 @@ def _collect_configs(
         if not file_path:
             continue
 
-        # Dict[str, Any] to stop mypy complaining:
+        # dict[str, Any] to stop mypy complaining:
         # https://github.com/python/mypy/issues/5382#issuecomment-583901369
-        source_kwargs: Dict[str, Any] = {
+        source_kwargs: dict[str, Any] = {
             "filepath": file_path,
             "package_name": package_name,
         }
@@ -109,7 +107,7 @@ def _collect_configs(
     return sources
 
 
-def deep_merge(destination: Dict[Any, Any], source: Dict[Any, Any]) -> Dict[Any, Any]:
+def deep_merge(destination: dict[Any, Any], source: dict[Any, Any]) -> dict[Any, Any]:
     """Recursively updates the destination dictionary.
 
     Usage example:

@@ -7,6 +7,10 @@
 
 Read configuration settings from configuration files.
 
+**[📚 View Documentation](https://maison.readthedocs.io/)** | **[🐛 Report a Bug](https://github.com/dbatten/maison/issues)** | **[✨ Request a Feature](https://github.com/dbatten/maison/issues)**
+
+---
+
 ## Motivation
 
 When developing a `python` package, e.g a command-line tool, it can be helpful
@@ -28,9 +32,33 @@ configuration options so that they may be used in the package.
 
 ## Installation
 
+You can install `maison` via [pip](pip-documentation) from PyPI:
+
 ```bash
 pip install maison
 ```
+
+### Installation for Development
+
+To set up `maison` for local development:
+
+1.  Clone the repository:
+    ```bash
+    git clone https://github.com/dbatten/maison.git
+    cd maison
+    ```
+2.  Install dependencies using [:term:`uv`](uv-documentation):
+    ```bash
+    uv sync
+    ```
+3.  Install pre-commit hooks:
+    ```bash
+    uvx nox -s pre-commit -- install
+    ```
+
+This sets up a virtual environment and installs core, development, and quality check dependencies.
+
+````
 
 ## Usage
 
@@ -39,7 +67,7 @@ Suppose the following `pyproject.toml` lives somewhere in a user's directory:
 ```toml
 [tool.acme]
 enable_useful_option = true
-```
+````
 
 `maison` exposes a `UserConfig` class to retrieve values from config files
 like so:
@@ -55,12 +83,35 @@ if config.values["enable_useful_option"]:
     run_useful_action()
 ```
 
-## Help
+## Development Workflow
 
-See the [documentation](https://maison.readthedocs.io) for more details.
+This project uses a robust set of tools for development, testing, and quality assurance. All significant automated tasks are run via [:term:`Nox`](nox-documentation), orchestrated by the central `noxfile.py`.
 
-## Licence
+- **Run all checks (lint, typecheck, security):** `uvx nox -s check`
+- **Run test suite with coverage:** `uvx nox -s test`
+- **Build documentation:** `uvx nox -s docs`
+- **Build package:** `uvx nox -s build`
+- **See all available tasks:** `uvx nox -l`
 
-MIT
+Explore the `noxfile.py` and the project documentation for detailed information on the automated workflow.
 
-<!-- github-only -->
+## Contributing
+
+(This section should guide contributions _to this specific generated project_, not the template. It should refer to the project's `CODE_OF_CONDUCT.md` and link to a `CONTRIBUTING.md` specific to the project, if you choose to generate one.)
+
+Report bugs or suggest features via the [issue tracker](https://github.com/dbatten/maison/issues).
+
+See [CONTRIBUTING.md](#) for contribution guidelines.
+
+## License
+
+Distributed under the terms of the **MIT** license. See [LICENSE](LICENSE) for details.
+
+---
+
+**This project was generated from the [cookiecutter-robust-python template][cookiecutter-robust-python].**
+
+<!-- Reference Links -->
+
+[cookiecutter-robust-python]: https://github.com/56kyle/cookiecutter-robust-python
+[documentation]: https://maison.readthedocs.io/

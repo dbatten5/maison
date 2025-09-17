@@ -1,12 +1,21 @@
 {
-  "_template": "gh:dbatten5/cookiecutter-hypermodern-python",
+  "_checkout": null,
+  "_output_dir": "/Users/dom.batten/projects/personal/maison/",
+  "_repo_dir": "/Users/dom.batten/.cookiecutters/cookiecutter-robust-python",
+  "_template": "gh:56kyle/cookiecutter-robust-python",
+  "add_rust_extension": false,
   "author": "Dom Batten",
-  "development_status": "Development Status :: 3 - Alpha",
+  "copyright_year": "2025",
+  "development_status": "Development Status :: 5 - Production/Stable",
   "email": "dominic.batten@googlemail.com",
   "friendly_name": "Maison",
-  "github_user": "dbatten5",
   "license": "MIT",
+  "max_python_version": "3.13",
+  "min_python_version": "3.9",
   "package_name": "maison",
   "project_name": "maison",
-  "version": "0.1.0"
+  "repository_host": "github.com",
+  "repository_path": "dbatten/maison",
+  "repository_provider": "github",
+  "version": "2.0.0"
 }

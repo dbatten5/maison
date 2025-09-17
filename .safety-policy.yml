@@ -13,7 +13,7 @@ security: # configuration for the `safety check` command
     # We recommend making use of the optional `reason` and `expires` keys for each vulnerability that you ignore.
     70612:
       reason: The affected spec is >=0 which doesn't seem right
-      expires: '2025-06-15'
+      expires: "2025-06-15"
   continue-on-vulnerability-error: False # Suppress non-zero exit codes when vulnerabilities are found. Enable this in pipelines and CI/CD processes if you want to pass builds that have vulnerabilities. We recommend you set this to False.
 alert: # configuration for the `safety alert` command
   security:

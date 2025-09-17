@@ -1,67 +1,62 @@
-[tool.poetry]
+[project]
 name = "maison"
 version = "2.0.0"
 description = "Read settings from config files"
-authors = ["Dom Batten <dominic.batten@googlemail.com>"]
+authors = [
+    { name = "Dom Batten", email = "dominic.batten@googlemail.com" },
+]
 license = "MIT"
 readme = "README.md"
-homepage = "https://github.com/dbatten5/maison"
-repository = "https://github.com/dbatten5/maison"
-documentation = "https://maison.readthedocs.io"
+requires-python = ">=3.9,<4.0"
+keywords = [
+    "maison",
+]
 classifiers = [
-    "Development Status :: 3 - Alpha",
     "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3 :: Only",
 ]
-include = [
-  { path = "tests", format = "sdist" }
+dependencies = [
+    "loguru>=0.7.3",
+    "platformdirs>=4.3.8",
+    "toml>=0.10.2",
+    "typer>=0.15.4",
+    "typing-extensions>=4.13.2",
 ]
 
-[tool.poetry.urls]
-Changelog = "https://github.com/dbatten5/maison/releases"
+[dependency-groups]
+dev = [
+    "commitizen>=4.7.0",
+    "nox>=2025.5.1",
+    "pre-commit>=4.2.0",
+    "pre-commit-hooks>=5.0.0",
+    "ruff>=0.11.9",
+    "bandit>=1.8.3",
+    "pip-audit>=2.9.0",
+    "pytest>=8.3.5",
+    "pytest-cov>=6.1.1",
+    "pyright>=1.1.400",
+    "pydantic>=2.11.9",
+]
+docs = [
+    "furo>=2024.8.6",
+    "myst-parser>=3.0.1",
+    "sphinx>=7.4.7",
+    "sphinx-autodoc-typehints>=2.3.0",
+    "sphinx-copybutton>=0.5.2",
+    "sphinx-tabs>=3.4.7",
+    "sphinxcontrib-typer>=0.5.1",
+]
 
-[tool.poetry.dependencies]
-python = "^3.9.1"
-click = "^8.0.1"
-toml = "^0.10.2"
 
-[tool.poetry.group.test.dependencies]
-pytest = "^8.3.0"
-pydantic = "^2.8.2"
-coverage = {extras = ["toml"], version = "^7.4.0"}
-six = "^1.16.0"
+[project.urls]
+Homepage = "https://github.com/dbatten/maison"
+Repository = "https://github.com/dbatten/maison"
 
-[tool.poetry.group.dev.dependencies]
-typeguard = "^4.1.5"
-safety = "^2.3.5"
-mypy = "^1.11.0"
-black = "^24.8.0"
-pre-commit = "^3.5.0"
-pre-commit-hooks = "^4.0.1"
-Pygments = "^2.18.0"
-ruff = "^0.1.13"
-
-[tool.poetry.group.docs.dependencies]
-sphinx = "^6.0.0"
-sphinx-autobuild = ">=2024.4.16"
-sphinx-click = ">=3.0.2"
-myst-parser = "2.0.0"
-furo = "^2023.9.10"
-
-[tool.poetry.scripts]
-maison = "maison.__main__:main"
-
-[tool.coverage.paths]
-source = ["src", "*/site-packages"]
-
-[tool.coverage.run]
-branch = true
-source = ["maison"]
-
-[tool.coverage.report]
-show_missing = true
-fail_under = 100
+[[tool.uv.index]]
+name = "testpypi"
+url = "https://test.pypi.org/simple/"
+publish-url = "https://test.pypi.org/legacy/"
+explicit = true
 
 [tool.mypy]
 strict = true
@@ -133,5 +128,5 @@ convention = 'google'
 force-single-line = true
 
 [build-system]
-requires = ["poetry-core>=1.0.0"]
-build-backend = "poetry.core.masonry.api"
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
