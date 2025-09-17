@@ -2,7 +2,6 @@
 
 from pathlib import Path
 from typing import Callable
-from typing import Dict
 from unittest.mock import MagicMock
 from unittest.mock import patch
 
@@ -110,9 +109,9 @@ class TestDeepMerge:
     )
     def test_success(
         self,
-        a: Dict[int, int],
-        b: Dict[int, int],
-        expected: Dict[int, int],
+        a: dict[int, int],
+        b: dict[int, int],
+        expected: dict[int, int],
     ) -> None:
         assert deep_merge(a, b) == expected
         assert a == expected

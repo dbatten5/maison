@@ -1,7 +1,6 @@
 """Module to hold the `PyprojectSource` class definition."""
 
 from typing import Any
-from typing import Dict
 
 from .toml_source import TomlSource
 
@@ -9,7 +8,7 @@ from .toml_source import TomlSource
 class PyprojectSource(TomlSource):
     """Class to represent a `pyproject.toml` config source."""
 
-    def to_dict(self) -> Dict[Any, Any]:
+    def to_dict(self) -> dict[Any, Any]:
         """Convert the package `pyproject.toml` section to a dict.
 
         Relies on the convention that config related to package `acme` will be

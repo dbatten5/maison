@@ -4,7 +4,6 @@ import os
 import shlex
 from pathlib import Path
 from textwrap import dedent
-from typing import List
 
 import nox
 from nox.command import CommandFailed
@@ -17,7 +16,7 @@ nox.options.default_venv_backend = "uv"
 MIN_PYTHON_VERSION_SLUG: int = int("3.9".lstrip("3."))
 MAX_PYTHON_VERSION_SLUG: int = int("3.13".lstrip("3."))
 
-PYTHON_VERSIONS: List[str] = [
+PYTHON_VERSIONS: list[str] = [
     f"3.{VERSION_SLUG}"
     for VERSION_SLUG in range(MIN_PYTHON_VERSION_SLUG, MAX_PYTHON_VERSION_SLUG + 1)
 ]

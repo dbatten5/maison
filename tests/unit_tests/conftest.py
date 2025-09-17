@@ -3,7 +3,6 @@
 from pathlib import Path
 from typing import Any
 from typing import Callable
-from typing import Dict
 from typing import Optional
 
 import pytest
@@ -28,7 +27,7 @@ def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., P
 
     def _create_toml(
         filename: str,
-        content: Optional[Dict[str, Any]] = None,
+        content: Optional[dict[str, Any]] = None,
     ) -> Path:
         content = content or {}
         config_toml = toml.dumps(content)
@@ -43,7 +42,7 @@ def create_pyproject_toml(create_toml: Callable[..., Path]) -> Callable[..., Pat
 
     def _create_pyproject_toml(
         section_name: str = "foo",
-        content: Optional[Dict[str, Any]] = None,
+        content: Optional[dict[str, Any]] = None,
         filename: str = "pyproject.toml",
     ) -> Path:
         content = content or {"bar": "baz"}

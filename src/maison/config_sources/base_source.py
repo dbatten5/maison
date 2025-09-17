@@ -4,7 +4,6 @@ from abc import ABC
 from abc import abstractmethod
 from pathlib import Path
 from typing import Any
-from typing import Dict
 
 
 class BaseSource(ABC):
@@ -47,7 +46,7 @@ class BaseSource(ABC):
         return self.filepath.name
 
     @abstractmethod
-    def to_dict(self) -> Dict[Any, Any]:
+    def to_dict(self) -> dict[Any, Any]:
         """Convert the source config file to a dict.
 
         Returns:
