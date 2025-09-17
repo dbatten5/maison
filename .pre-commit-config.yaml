@@ -1,12 +1,10 @@
+# .pre-commit-config.yaml
+# See https://pre-commit.com/
+default_stages: [pre-commit]
+
 repos:
   - repo: local
     hooks:
-      - id: black
-        name: black
-        entry: black
-        language: system
-        types: [python]
-        require_serial: true
       - id: check-added-large-files
         name: Check for added large files
         entry: check-added-large-files
@@ -26,16 +24,36 @@ repos:
         entry: end-of-file-fixer
         language: system
         types: [text]
-        stages: [commit, push, manual]
-      - id: ruff
-        name: ruff
-        entry: ruff
-        language: system
-        types: [python]
-        require_serial: true
+        stages: [pre-commit, pre-push, manual]
       - id: trailing-whitespace
         name: Trim Trailing Whitespace
         entry: trailing-whitespace-fixer
         language: system
         types: [text]
-        stages: [commit, push, manual]
+        stages: [pre-commit, pre-push, manual]
+
+  - repo: https://github.com/astral-sh/ruff-pre-commit
+    rev: v0.11.11
+    hooks:
+      - id: ruff-format
+        args: [--config=.ruff.toml]
+        name: Ruff Format
+
+      - id: ruff-check
+        args: [--fix, --diff, --exit-non-zero-on-fix, --config=.ruff.toml]
+        name: Ruff Check
+
+  - repo: https://github.com/pre-commit/mirrors-prettier
+    rev: v2.6.0
+    hooks:
+      - id: prettier
+        name: Prettier
+
+  - repo: https://github.com/commitizen-tools/commitizen
+    rev: v4.8.2
+    hooks:
+      - id: commitizen
+        name: Commitizen
+      - id: commitizen-branch
+        name: Commitizen Branch
+        stages: [commit-msg]

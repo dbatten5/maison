@@ -1,37 +1,335 @@
-"""Nox sessions."""
+"""Noxfile for the maison project."""
 
 import os
-import shutil
-import sys
+import shlex
 from pathlib import Path
 from textwrap import dedent
 
 import nox
-
-try:
-    from nox_poetry import Session
-    from nox_poetry import session
-except ImportError:
-    message = f"""\
-    Nox failed to import the 'nox-poetry' package.
-
-    Please install it using the following command:
-
-    {sys.executable} -m pip install nox-poetry"""
-    raise SystemExit(dedent(message)) from None
+from nox.command import CommandFailed
+from nox.sessions import Session
 
 
-package = "maison"
-python_versions = ["3.11", "3.10", "3.9"]
-nox.needs_version = ">= 2021.6.6"
-nox.options.sessions = (
-    "pre-commit",
-    "safety",
-    "mypy",
-    "tests",
-    "typeguard",
-    "docs-build",
-)
+nox.options.default_venv_backend = "uv"
+
+# Logic that helps avoid metaprogramming in cookiecutter-robust-python
+MIN_PYTHON_VERSION_SLUG: int = int("3.9".lstrip("3."))
+MAX_PYTHON_VERSION_SLUG: int = int("3.13".lstrip("3."))
+
+PYTHON_VERSIONS: list[str] = [
+    f"3.{VERSION_SLUG}"
+    for VERSION_SLUG in range(MIN_PYTHON_VERSION_SLUG, MAX_PYTHON_VERSION_SLUG + 1)
+]
+DEFAULT_PYTHON_VERSION: str = PYTHON_VERSIONS[-1]
+
+REPO_ROOT: Path = Path(__file__).parent.resolve()
+TESTS_FOLDER: Path = REPO_ROOT / "tests"
+SCRIPTS_FOLDER: Path = REPO_ROOT / "scripts"
+CRATES_FOLDER: Path = REPO_ROOT / "rust"
+
+PROJECT_NAME: str = "maison"
+PACKAGE_NAME: str = "maison"
+REPOSITORY_HOST: str = "github.com"
+REPOSITORY_PATH: str = "dbatten/maison"
+
+ENV: str = "env"
+FORMAT: str = "format"
+LINT: str = "lint"
+TYPE: str = "type"
+TEST: str = "test"
+COVERAGE: str = "coverage"
+SECURITY: str = "security"
+PERF: str = "perf"
+DOCS: str = "docs"
+BUILD: str = "build"
+RELEASE: str = "release"
+QUALITY: str = "quality"
+PYTHON: str = "python"
+RUST: str = "rust"
+
+
+@nox.session(python=False, name="setup-git", tags=[ENV])
+def setup_git(session: Session) -> None:
+    """Set up the git repo for the current project."""
+    session.run("python", SCRIPTS_FOLDER / "setup-git.py", REPO_ROOT, external=True)
+
+
+@nox.session(python=False, name="setup-venv", tags=[ENV])
+def setup_venv(session: Session) -> None:
+    """Set up the virtual environment for the current project."""
+    session.run(
+        "python",
+        SCRIPTS_FOLDER / "setup-venv.py",
+        REPO_ROOT,
+        "-p",
+        PYTHON_VERSIONS[0],
+        external=True,
+    )
+
+
+@nox.session(python=False, name="setup-remote")
+def setup_remote(session: Session) -> None:
+    """Set up the remote repository for the current project."""
+    command: list[str] = [
+        "python",
+        SCRIPTS_FOLDER / "setup-remote.py",
+        REPO_ROOT,
+        "--host",
+        REPOSITORY_HOST,
+        "--path",
+        REPOSITORY_PATH,
+    ]
+    session.run(*command, external=True)
+
+
+@nox.session(python=DEFAULT_PYTHON_VERSION, name="pre-commit", tags=[QUALITY])
+def precommit(session: Session) -> None:
+    """Lint using pre-commit."""
+    args: list[str] = session.posargs or [
+        "run",
+        "--all-files",
+        "--show-diff-on-failure",
+    ]
+
+    session.log("Installing pre-commit dependencies...")
+    session.install("-e", ".", "--group", "dev")
+
+    session.run("pre-commit", *args)
+    if args and args[0] == "install":
+        activate_virtualenv_in_precommit_hooks(session)
+
+
+@nox.session(python=False, name="format-python", tags=[FORMAT, PYTHON, QUALITY])
+def format_python(session: Session) -> None:
+    """Run Python code formatter (Ruff format)."""
+    session.log(f"Running Ruff formatter check with py{session.python}.")
+    session.run("uvx", "ruff", "format", *session.posargs)
+
+
+@nox.session(python=False, name="lint-python", tags=[LINT, PYTHON, QUALITY])
+def lint_python(session: Session) -> None:
+    """Run Python code linters (Ruff check, Pydocstyle rules)."""
+    session.log(f"Running Ruff check with py{session.python}.")
+    session.run("uvx", "ruff", "check", "--fix", "--verbose")
+
+
+@nox.session(python=PYTHON_VERSIONS, name="typecheck", tags=[TYPE, PYTHON])
+def typecheck(session: Session) -> None:
+    """Run static type checking (Pyright) on Python code."""
+    session.log("Installing type checking dependencies...")
+    session.install("-e", ".", "--group", "dev")
+
+    session.log(f"Running Pyright check with py{session.python}.")
+    session.run("pyright", "--pythonversion", session.python)
+
+
+@nox.session(python=False, name="security-python", tags=[SECURITY, PYTHON])
+def security_python(session: Session) -> None:
+    """Run code security checks (Bandit) on Python code."""
+    session.log(f"Running Bandit static security analysis with py{session.python}.")
+    session.run("uvx", "bandit", "-r", PACKAGE_NAME, "-c", "bandit.yml", "-ll")
+
+    session.log(f"Running pip-audit dependency security check with py{session.python}.")
+    session.run("uvx", "pip-audit")
+
+
+@nox.session(python=PYTHON_VERSIONS, name="tests-python", tags=[TEST, PYTHON])
+def tests_python(session: Session) -> None:
+    """Run the Python test suite (pytest with coverage)."""
+    session.log("Installing test dependencies...")
+    session.install("-e", ".", "--group", "dev")
+
+    session.log(f"Running test suite with py{session.python}.")
+    test_results_dir = TESTS_FOLDER / "results"
+    test_results_dir.mkdir(parents=True, exist_ok=True)
+    junitxml_file = (
+        test_results_dir / f"test-results-py{session.python.replace('.', '')}.xml"
+    )
+
+    session.run(
+        "pytest",
+        f"--cov={PACKAGE_NAME}",
+        "--cov-append",
+        "--cov-report=term",
+        "--cov-report=xml",
+        f"--junitxml={junitxml_file}",
+        "tests/",
+    )
+
+
+@nox.session(python=DEFAULT_PYTHON_VERSION, name="build-docs", tags=[DOCS, BUILD])
+def docs_build(session: Session) -> None:
+    """Build the project documentation (Sphinx)."""
+    session.log("Installing documentation dependencies...")
+    session.install("-e", ".", "--group", "docs")
+
+    session.log(f"Building documentation with py{session.python}.")
+    docs_build_dir = Path("docs") / "_build" / "html"
+
+    session.log(f"Cleaning build directory: {docs_build_dir}")
+    session.run("sphinx-build", "-b", "html", "docs", str(docs_build_dir), "-E")
+
+    session.log("Building documentation.")
+    session.run("sphinx-build", "-b", "html", "docs", str(docs_build_dir), "-W")
+
+
+@nox.session(python=False, name="build-python", tags=[BUILD, PYTHON])
+def build_python(session: Session) -> None:
+    """Build sdist and wheel packages (uv build)."""
+    session.log(f"Building sdist and wheel packages with py{session.python}.")
+    session.run(
+        "uv", "build", "--sdist", "--wheel", "--out-dir", "dist/", external=True
+    )
+    session.log("Built packages in ./dist directory:")
+    for path in Path("dist/").glob("*"):
+        session.log(f"- {path.name}")
+
+
+@nox.session(python=False, name="build-container", tags=[BUILD])
+def build_container(session: Session) -> None:
+    """Build the Docker container image.
+
+    Requires Docker or Podman installed and running on the host.
+    Ensures core project dependencies are synced in the current environment
+    *before* the build context is prepared.
+    """
+    session.log("Building application container image...")
+    try:
+        session.run("docker", "info", success_codes=[0], external=True, silent=True)
+        container_cli = "docker"
+    except CommandFailed:
+        try:
+            session.run("podman", "info", success_codes=[0], external=True, silent=True)
+            container_cli = "podman"
+        except CommandFailed:
+            session.log(
+                "Neither Docker nor Podman command found. Please install a container runtime."
+            )
+            session.skip("Container runtime not available.")
+
+    current_dir: Path = Path.cwd()
+    session.log(
+        f"Ensuring core dependencies are synced in {current_dir.resolve()} for build context..."
+    )
+    session.install("-e", ".")
+
+    session.log(f"Building Docker image using {container_cli}.")
+    project_image_name = PACKAGE_NAME.replace("_", "-").lower()
+    session.run(
+        container_cli,
+        "build",
+        str(current_dir),
+        "-t",
+        f"{project_image_name}:latest",
+        "--progress=plain",
+        external=True,
+    )
+
+    session.log(f"Container image {project_image_name}:latest built locally.")
+
+
+@nox.session(python=False, name="setup-release", tags=[RELEASE])
+def setup_release(session: Session) -> None:
+    """Prepares a release by creating a release branch and bumping the version.
+
+    Additionally, creates the initial bump commit but doesn't push it.
+    """
+    session.log("Setting up release...")
+
+    session.run(
+        "python", SCRIPTS_FOLDER / "setup-release.py", *session.posargs, external=True
+    )
+
+
+@nox.session(python=False, name="get-release-notes", tags=[RELEASE])
+def get_release_notes(session: Session) -> None:
+    """Gets the latest release notes if between bumping the version and tagging the release."""
+    session.log("Getting release notes...")
+    session.run(
+        "python",
+        SCRIPTS_FOLDER / "get-release-notes.py",
+        *session.posargs,
+        external=True,
+    )
+
+
+@nox.session(python=False, name="publish-python", tags=[RELEASE])
+def publish_python(session: Session) -> None:
+    """Publish sdist and wheel packages to PyPI via uv publish.
+
+    Requires packages to be built first (`nox -s build-python` or `nox -s build`).
+    Requires TWINE_USERNAME/TWINE_PASSWORD or TWINE_API_KEY environment variables set (usually in CI).
+    """
+    session.log("Checking built packages with Twine.")
+    session.run("uvx", "twine", "check", "dist/*")
+
+    session.log("Publishing packages to PyPI.")
+    session.run("uv", "publish", "dist/*", *session.posargs, external=True)
+
+
+@nox.session(python=False)
+def tox(session: Session) -> None:
+    """Run the 'tox' test matrix.
+
+    Requires uvx in PATH. Requires tox.ini file.
+    Useful for specific ecosystem conventions (e.g., pytest plugins,
+    cookiecutter-driven matrix testing).
+    Accepts tox args after '--' (e.g., `nox -s tox -- -e py39`).
+    """
+    session.log("Running Tox test matrix via uvx...")
+    session.install("-e", ".", "--group", "dev")
+
+    tox_ini_path = Path("tox.ini")
+    if not tox_ini_path.exists():
+        session.log(
+            "tox.ini file not found at %s. Tox requires this file.", str(tox_ini_path)
+        )
+        session.skip("tox.ini not present.")
+
+    session.log("Checking Tox availability via uvx.")
+    session.run("tox", "--version", success_codes=[0])
+
+    session.run("tox", *session.posargs)
+
+
+@nox.session(python=DEFAULT_PYTHON_VERSION, tags=[COVERAGE])
+def coverage(session: Session) -> None:
+    """Collect and report coverage.
+
+    Requires tests to have been run with --cov and --cov-report=xml across matrix
+    (e.g., via `nox -s test-python`).
+    """
+    session.log("Collecting and reporting coverage across all test runs.")
+    session.log(
+        "Note: Ensure 'nox -s test-python' was run across all desired Python versions first to generate coverage data."
+    )
+
+    session.log("Installing dependencies for coverage report session...")
+    session.install("-e", ".", "--group", "dev")
+
+    coverage_combined_file: Path = Path.cwd() / ".coverage"
+
+    session.log("Combining coverage data.")
+    try:
+        session.run("coverage", "combine")
+        session.log(f"Combined coverage data into {coverage_combined_file.resolve()}")
+    except CommandFailed as e:
+        if e.returncode == 1:
+            session.log(
+                "No coverage data found to combine. Run tests first with coverage enabled."
+            )
+        else:
+            session.error(f"Failed to combine coverage data: {e}")
+        session.skip("Could not combine coverage data.")
+
+    session.log("Generating HTML coverage report.")
+    coverage_html_dir = Path("coverage-html")
+    session.run("coverage", "html", "--directory", str(coverage_html_dir))
+
+    session.log("Running terminal coverage report.")
+    session.run("coverage", "report")
+
+    session.log(f"Coverage reports generated in ./{coverage_html_dir} and terminal.")
 
 
 def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
@@ -44,14 +342,43 @@ def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
     Args:
         session: The Session object.
     """
-    if session.bin is None:
-        return
+    assert session.bin is not None  # nosec
+
+    # Only patch hooks containing a reference to this session's bindir. Support
+    # quoting rules for Python and bash, but strip the outermost quotes so we
+    # can detect paths within the bindir, like <bindir>/python.
+    bindirs = [
+        bindir[1:-1] if bindir[0] in "'\"" else bindir
+        for bindir in (repr(session.bin), shlex.quote(session.bin))
+    ]
 
     virtualenv = session.env.get("VIRTUAL_ENV")
     if virtualenv is None:
         return
 
-    hookdir = Path(".git") / "hooks"
+    headers = {
+        # pre-commit < 2.16.0
+        "python": f"""\
+            import os
+            os.environ["VIRTUAL_ENV"] = {virtualenv!r}
+            os.environ["PATH"] = os.pathsep.join((
+                {session.bin!r},
+                os.environ.get("PATH", ""),
+            ))
+            """,
+        # pre-commit >= 2.16.0
+        "bash": f"""\
+            VIRTUAL_ENV={shlex.quote(virtualenv)}
+            PATH={shlex.quote(session.bin)}"{os.pathsep}$PATH"
+            """,
+        # pre-commit >= 2.17.0 on Windows forces sh shebang
+        "/bin/sh": f"""\
+            VIRTUAL_ENV={shlex.quote(virtualenv)}
+            PATH={shlex.quote(session.bin)}"{os.pathsep}$PATH"
+            """,
+    }
+
+    hookdir: Path = Path(".git") / "hooks"
     if not hookdir.is_dir():
         return
 
@@ -59,132 +386,22 @@ def activate_virtualenv_in_precommit_hooks(session: Session) -> None:
         if hook.name.endswith(".sample") or not hook.is_file():
             continue
 
-        text = hook.read_text()
-        bindir = repr(session.bin)[1:-1]  # strip quotes
-        if not (
-            Path("A") == Path("a") and bindir.lower() in text.lower() or bindir in text
+        if not hook.read_bytes().startswith(b"#!"):
+            continue
+
+        text: str = hook.read_text()
+
+        if not any(
+            (Path("A") == Path("a") and bindir.lower() in text.lower())
+            or bindir in text
+            for bindir in bindirs
         ):
             continue
 
-        lines = text.splitlines()
-        if not (lines[0].startswith("#!") and "python" in lines[0].lower()):
-            continue
+        lines: list[str] = text.splitlines()
 
-        header = dedent(
-            f"""\
-            import os
-            os.environ["VIRTUAL_ENV"] = {virtualenv!r}
-            os.environ["PATH"] = os.pathsep.join((
-                {session.bin!r},
-                os.environ.get("PATH", ""),
-            ))
-            """
-        )
-
-        lines.insert(1, header)
-        hook.write_text("\n".join(lines))
-
-
-@session(name="pre-commit", python=python_versions[0])
-def precommit(session: Session) -> None:
-    """Lint using pre-commit."""
-    args = session.posargs or [
-        "run",
-        "--all-files",
-        "--hook-stage=manual",
-        "--show-diff-on-failure",
-    ]
-    session.install(
-        "black",
-        "ruff",
-        "pre-commit",
-        "pre-commit-hooks",
-    )
-    session.run("pre-commit", *args)
-    if args and args[0] == "install":
-        activate_virtualenv_in_precommit_hooks(session)
-
-
-@session(python=python_versions[0])
-def safety(session: Session) -> None:
-    """Scan dependencies for insecure packages."""
-    requirements = session.poetry.export_requirements()
-    session.install("safety")
-    session.run(
-        "safety", "check", "--full-report", f"--file={requirements}", "--ignore=70612"
-    )
-
-
-@session(python=python_versions)
-def mypy(session: Session) -> None:
-    """Type-check using mypy."""
-    args = session.posargs or ["src", "tests", "docs/conf.py"]
-    session.install(".")
-    session.install("mypy", "pytest", "types-toml", "pydantic")
-    session.run("mypy", *args)
-    if not session.posargs:
-        session.run("mypy", f"--python-executable={sys.executable}", "noxfile.py")
-
-
-@session(python=python_versions)
-def tests(session: Session) -> None:
-    """Run the test suite."""
-    session.install(".")
-    session.install("coverage[toml]", "pytest", "pygments", "pydantic")
-    try:
-        session.run("coverage", "run", "--parallel", "-m", "pytest", *session.posargs)
-    finally:
-        if session.interactive:
-            session.notify("coverage", posargs=[])
-
-
-@session(python=python_versions[0])
-def coverage(session: Session) -> None:
-    """Produce the coverage report."""
-    args = session.posargs or ["report"]
-
-    session.install("coverage[toml]")
-
-    if not session.posargs and any(Path().glob(".coverage.*")):
-        session.run("coverage", "combine")
-
-    session.run("coverage", *args)
-
-
-@session(python=python_versions[0])
-def typeguard(session: Session) -> None:
-    """Runtime type checking using Typeguard."""
-    session.install(".")
-    session.install("pytest", "typeguard", "pygments", "pydantic")
-    session.run("pytest", f"--typeguard-packages={package}", *session.posargs)
-
-
-@session(name="docs-build", python=python_versions[0])
-def docs_build(session: Session) -> None:
-    """Build the documentation."""
-    args = session.posargs or ["docs", "docs/_build"]
-    if not session.posargs and "FORCE_COLOR" in os.environ:
-        args.insert(0, "--color")
-
-    session.install(".")
-    session.install("sphinx", "sphinx-click", "furo", "myst-parser")
-
-    build_dir = Path("docs", "_build")
-    if build_dir.exists():
-        shutil.rmtree(build_dir)
-
-    session.run("sphinx-build", *args)
-
-
-@session(python=python_versions[0])
-def docs(session: Session) -> None:
-    """Build and serve the documentation with live reloading on file changes."""
-    args = session.posargs or ["--open-browser", "docs", "docs/_build"]
-    session.install(".")
-    session.install("sphinx", "sphinx-autobuild", "sphinx-click", "furo", "myst-parser")
-
-    build_dir = Path("docs", "_build")
-    if build_dir.exists():
-        shutil.rmtree(build_dir)
-
-    session.run("sphinx-autobuild", *args)
+        for executable, header in headers.items():
+            if executable in lines[0].lower():
+                lines.insert(1, dedent(header))
+                hook.write_text("\n".join(lines))
+                break

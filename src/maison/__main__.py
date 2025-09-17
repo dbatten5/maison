@@ -1,13 +1,15 @@
 """Command-line interface."""
 
-import click
+import typer
 
 
-@click.command()
-@click.version_option()
+app: typer.Typer = typer.Typer()
+
+
+@app.command(name="maison")
 def main() -> None:
     """Maison."""
 
 
 if __name__ == "__main__":
-    main(prog_name="maison")  # pragma: no cover
+    app()  # pragma: no cover

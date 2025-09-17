@@ -3,7 +3,6 @@
 from configparser import ConfigParser
 from functools import lru_cache
 from typing import Any
-from typing import Dict
 
 from .base_source import BaseSource
 
@@ -11,7 +10,7 @@ from .base_source import BaseSource
 class IniSource(BaseSource):
     """Class to represent a `.ini` config source."""
 
-    def to_dict(self) -> Dict[Any, Any]:
+    def to_dict(self) -> dict[Any, Any]:
         """Convert the source config file to a dict.
 
         Returns:
