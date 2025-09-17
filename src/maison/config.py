@@ -20,6 +20,7 @@ class _IsSchema(Protocol):
 
     def model_dump(self) -> Dict[Any, Any]:
         """Convert the validated config to a dict."""
+        ...
 
 
 class UserConfig:

@@ -1,0 +1,39 @@
+{
+  "include": ["src", "tests"],
+  "exclude": [
+    ".venv",
+    "venv",
+    ".git",
+    "__pycache__",
+    "build",
+    "dist",
+    ".nox",
+    ".ruff_cache",
+    ".pytest_cache",
+    ".mypy_cache",
+    ".coverage",
+    "rust"
+  ],
+  "venvPath": ".",
+  "venv": ".venv",
+  "executionEnvironments": [
+    {
+      "root": ".",
+      "extraPaths": []
+    }
+  ],
+  "defineConstant": {
+    "DEBUG": true
+  },
+  "reportMissingImports": true,
+  "reportMissingTypeStubs": true,
+
+  "reportGeneralTypeIssues": "warning",
+  "reportPropertyTypeMismatch": "warning",
+  "reportReturnTypeFromAnnotation": "warning",
+  "reportMissingReturnType": "warning",
+  "basic": true,
+  "reportMissingParameterType": "warning",
+  "reportOptionalOperand": "warning",
+  "pythonVersion": "3.9"
+}
