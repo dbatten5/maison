@@ -58,8 +58,6 @@ To set up `maison` for local development:
 
 This sets up a virtual environment and installs core, development, and quality check dependencies.
 
-````
-
 ## Usage
 
 Suppose the following `pyproject.toml` lives somewhere in a user's directory:
@@ -67,7 +65,7 @@ Suppose the following `pyproject.toml` lives somewhere in a user's directory:
 ```toml
 [tool.acme]
 enable_useful_option = true
-````
+```
 
 `maison` exposes a `UserConfig` class to retrieve values from config files
 like so:
