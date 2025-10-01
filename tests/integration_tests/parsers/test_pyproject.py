@@ -5,7 +5,7 @@ import typing
 
 import pytest
 
-from maison.readers import pyproject
+from maison.parsers import pyproject
 
 
 FileFactory = typing.Callable[[str], pathlib.Path]
@@ -36,7 +36,7 @@ class TestParseConfig:
         """)
         path = tmp_pyproject_file(toml_content)
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {"debug": True, "retries": 3, "url": "https://example.com"}
@@ -50,7 +50,7 @@ class TestParseConfig:
         """)
         path = tmp_pyproject_file(toml_content)
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {}
@@ -64,7 +64,7 @@ class TestParseConfig:
         """)
         path = tmp_pyproject_file(toml_content)
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {}
@@ -77,7 +77,7 @@ class TestParseConfig:
         """)
         path = tmp_pyproject_file(toml_content)
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {"database": {"host": "localhost", "port": 5432}}
@@ -85,7 +85,7 @@ class TestParseConfig:
     def test_empty_file_returns_empty_dict(self, tmp_pyproject_file: FileFactory):
         path = tmp_pyproject_file("")
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {}
@@ -93,7 +93,7 @@ class TestParseConfig:
     def test_missing_file_raises_file_not_found(self, tmp_path: pathlib.Path):
         path = tmp_path / "no_such_pyproject.toml"
 
-        reader = pyproject.PyprojectReader("myapp")
+        reader = pyproject.PyprojectParser("myapp")
         result = reader.parse_config(path)
 
         assert result == {}

@@ -6,7 +6,7 @@ import pathlib
 from maison import types
 
 
-class IniReader:
+class IniParser:
     """Responsible for parsing .ini files.
 
     Implements the `Parser` protocol

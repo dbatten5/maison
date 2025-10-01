@@ -7,7 +7,7 @@ import toml
 from maison import types
 
 
-class TomlReader:
+class TomlParser:
     """Responsible for parsing .toml files.
 
     Implements the `Parser` protocol
@@ -17,5 +17,5 @@ class TomlReader:
         """See the Parser.parse_config method."""
         try:
             return dict(toml.load(file_path))
-        except FileNotFoundError:
+        except (FileNotFoundError, toml.TomlDecodeError):
             return {}

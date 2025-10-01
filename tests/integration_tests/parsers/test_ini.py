@@ -5,7 +5,7 @@ import typing
 
 import pytest
 
-from maison.readers import ini
+from maison.parsers import ini
 
 
 FileFactory = typing.Callable[[str], pathlib.Path]
@@ -33,7 +33,7 @@ class TestParseConfig:
         """)
         path = tmp_ini_file(ini_content)
 
-        reader = ini.IniReader()
+        reader = ini.IniParser()
         result = reader.parse_config(path)
 
         assert result == {"database": {"host": "localhost", "port": "5432"}}
@@ -50,7 +50,7 @@ class TestParseConfig:
         """)
         path = tmp_ini_file(ini_content)
 
-        reader = ini.IniReader()
+        reader = ini.IniParser()
         result = reader.parse_config(path)
 
         assert result == {
@@ -61,7 +61,7 @@ class TestParseConfig:
     def test_empty_file_returns_empty_dict(self, tmp_ini_file: FileFactory):
         path = tmp_ini_file("")
 
-        reader = ini.IniReader()
+        reader = ini.IniParser()
         result = reader.parse_config(path)
 
         assert result == {}
@@ -69,7 +69,7 @@ class TestParseConfig:
     def test_missing_file_returns_empty_dict(self, tmp_path: pathlib.Path):
         path = tmp_path / "nonexistent.ini"
 
-        reader = ini.IniReader()
+        reader = ini.IniParser()
         result = reader.parse_config(path)
 
         assert result == {}
@@ -84,7 +84,7 @@ class TestParseConfig:
         """)
         path = tmp_ini_file(ini_content)
 
-        reader = ini.IniReader()
+        reader = ini.IniParser()
         result = reader.parse_config(path)
 
         assert result == {"section1": {"key": "value1"}, "section2": {"key": "value2"}}

@@ -7,7 +7,7 @@ import toml
 from maison import types
 
 
-class PyprojectReader:
+class PyprojectParser:
     """Responsible for parsing pyproject.toml files.
 
     Implements the `Parser` protocol

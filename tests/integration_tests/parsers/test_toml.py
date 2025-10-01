@@ -5,7 +5,7 @@ import typing
 
 import pytest
 
-from maison.readers import toml
+from maison.parsers import toml
 
 
 FileFactory = typing.Callable[[str], pathlib.Path]
@@ -35,7 +35,7 @@ class TestParseConfig:
         """)
         path = tmp_toml_file(toml_content)
 
-        reader = toml.TomlReader()
+        reader = toml.TomlParser()
         result = reader.parse_config(path)
 
         assert result == {"database": {"host": "localhost", "port": 5432}}
@@ -52,7 +52,7 @@ class TestParseConfig:
         """)
         path = tmp_toml_file(toml_content)
 
-        reader = toml.TomlReader()
+        reader = toml.TomlParser()
         result = reader.parse_config(path)
 
         assert result == {
@@ -63,7 +63,7 @@ class TestParseConfig:
     def test_empty_file_returns_empty_dict(self, tmp_toml_file: FileFactory):
         path = tmp_toml_file("")
 
-        reader = toml.TomlReader()
+        reader = toml.TomlParser()
         result = reader.parse_config(path)
 
         assert result == {}
@@ -71,7 +71,7 @@ class TestParseConfig:
     def test_missing_file_returns_empty_dict(self, tmp_path: pathlib.Path):
         path = tmp_path / "nonexistent.toml"
 
-        reader = toml.TomlReader()
+        reader = toml.TomlParser()
         result = reader.parse_config(path)
 
         assert result == {}
@@ -86,7 +86,18 @@ class TestParseConfig:
         """)
         path = tmp_toml_file(toml_content)
 
-        reader = toml.TomlReader()
+        reader = toml.TomlParser()
         result = reader.parse_config(path)
 
         assert result == {"section1": {"key": "value1"}, "section2": {"key": "value2"}}
+
+    def test_invalid_toml_returns_an_empty_dict(self, tmp_toml_file: FileFactory):
+        toml_content = textwrap.dedent("""
+            blah
+        """)
+        path = tmp_toml_file(toml_content)
+
+        reader = toml.TomlParser()
+        result = reader.parse_config(path)
+
+        assert result == {}
