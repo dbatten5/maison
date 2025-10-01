@@ -19,3 +19,11 @@ class Parser(typing.Protocol):
             the parsed config values
         """
         ...
+
+
+class IsSchema(typing.Protocol):
+    """Protocol for config schemas."""
+
+    def model_dump(self) -> types.ConfigValues:
+        """Convert the validated config to a dict."""
+        ...
