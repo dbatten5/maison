@@ -10,7 +10,7 @@ from maison import errors
 from maison import parsers
 from maison import protocols
 from maison import service
-from maison import types
+from maison import typedefs
 
 
 def _bootstrap_service(package_name: str) -> service.ConfigService:
@@ -83,7 +83,7 @@ class UserConfig:
         return f"<class '{self.__class__.__name__}'>"
 
     @property
-    def values(self) -> types.ConfigValues:
+    def values(self) -> typedefs.ConfigValues:
         """Return the user's configuration values.
 
         Returns:
@@ -92,7 +92,7 @@ class UserConfig:
         return self._values
 
     @values.setter
-    def values(self, values: types.ConfigValues) -> None:
+    def values(self, values: typedefs.ConfigValues) -> None:
         """Set the user's configuration values."""
         self._values = values
 
@@ -145,7 +145,7 @@ class UserConfig:
         self,
         schema: typing.Optional[type[protocols.IsSchema]] = None,
         use_schema_values: bool = True,
-    ) -> types.ConfigValues:
+    ) -> typedefs.ConfigValues:
         """Validate the configuration.
 
         Warning:

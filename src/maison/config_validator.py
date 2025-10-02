@@ -1,7 +1,7 @@
 """Holds the tools for validating a user's config."""
 
 from maison import protocols
-from maison import types
+from maison import typedefs
 
 
 class Validator:
@@ -11,8 +11,8 @@ class Validator:
     """
 
     def validate(
-        self, values: types.ConfigValues, schema: type[protocols.IsSchema]
-    ) -> types.ConfigValues:
+        self, values: typedefs.ConfigValues, schema: type[protocols.IsSchema]
+    ) -> typedefs.ConfigValues:
         """See `Validator.validate`."""
         validated_schema = schema(**values)
         return validated_schema.model_dump()

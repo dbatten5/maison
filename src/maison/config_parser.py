@@ -4,7 +4,7 @@ import pathlib
 import typing
 
 from maison import errors
-from maison import types
+from maison import typedefs
 
 
 ParserDictKey = tuple[str, typing.Union[str, None]]
@@ -13,7 +13,7 @@ ParserDictKey = tuple[str, typing.Union[str, None]]
 class Parser(typing.Protocol):
     """Defines the interface for a `Parser` class that's used to parse a config."""
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """Parse a config file.
 
         Args:
@@ -42,7 +42,7 @@ class ConfigParser:
         key = (suffix, stem)
         self._parsers[key] = parser
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See `Parser.parse_config`."""
         key: ParserDictKey
 

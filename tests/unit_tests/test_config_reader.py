@@ -4,16 +4,16 @@ import pytest
 
 from maison import config_parser
 from maison import errors
-from maison import types
+from maison import typedefs
 
 
 class FakePyprojectParser:
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         return {"config": "pyproject"}
 
 
 class FakeTomlParser:
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         return {"config": "toml"}
 
 

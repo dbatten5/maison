@@ -4,7 +4,7 @@ import pathlib
 
 import toml
 
-from maison import types
+from maison import typedefs
 
 
 class TomlParser:
@@ -13,7 +13,7 @@ class TomlParser:
     Implements the `Parser` protocol
     """
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
             return dict(toml.load(file_path))

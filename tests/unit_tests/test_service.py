@@ -3,7 +3,7 @@ import typing
 
 from maison import protocols
 from maison import service as config_service
-from maison import types
+from maison import typedefs
 
 
 class FakeFileSystem:
@@ -16,21 +16,21 @@ class FakeFileSystem:
 
 
 class FakeConfigParser:
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         return {
             "values": {file_path.stem: file_path.suffix},
         }
 
 
 class Schema:
-    def model_dump(self) -> types.ConfigValues:
+    def model_dump(self) -> typedefs.ConfigValues:
         return {"key": "validated"}
 
 
 class FakeValidator:
     def validate(
-        self, values: types.ConfigValues, schema: type[protocols.IsSchema]
-    ) -> types.ConfigValues:
+        self, values: typedefs.ConfigValues, schema: type[protocols.IsSchema]
+    ) -> typedefs.ConfigValues:
         return schema().model_dump()
 
 

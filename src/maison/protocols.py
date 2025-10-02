@@ -3,13 +3,13 @@
 import pathlib
 import typing
 
-from maison import types
+from maison import typedefs
 
 
 class Parser(typing.Protocol):
     """Defines the interface for a parser used to parse a config file."""
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """Parses a config file.
 
         Args:
@@ -24,7 +24,7 @@ class Parser(typing.Protocol):
 class IsSchema(typing.Protocol):
     """Protocol for config schemas."""
 
-    def model_dump(self) -> types.ConfigValues:
+    def model_dump(self) -> typedefs.ConfigValues:
         """Convert the validated config to a dict."""
         ...
 
@@ -49,7 +49,7 @@ class Filesystem(typing.Protocol):
 class ConfigParser(typing.Protocol):
     """Defines the interface for a class that parses a config."""
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """Parse a config.
 
         Args:
@@ -65,8 +65,8 @@ class Validator(typing.Protocol):
     """Defines the interface for a class that validates some config values."""
 
     def validate(
-        self, values: types.ConfigValues, schema: type[IsSchema]
-    ) -> types.ConfigValues:
+        self, values: typedefs.ConfigValues, schema: type[IsSchema]
+    ) -> typedefs.ConfigValues:
         """Validate a config.
 
         Args:

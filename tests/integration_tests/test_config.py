@@ -5,7 +5,7 @@ import pytest
 
 from maison import config
 from maison import errors
-from maison import types
+from maison import typedefs
 
 
 class TestUserConfig:
@@ -99,7 +99,7 @@ class TestValidate:
             def __init__(self, *args: object, **kwargs: object) -> None:
                 pass
 
-            def model_dump(self) -> types.ConfigValues:
+            def model_dump(self) -> typedefs.ConfigValues:
                 return {"key": "validated"}
 
         cfg = config.UserConfig(
@@ -123,7 +123,7 @@ class TestValidate:
             def __init__(self, *args: object, **kwargs: object) -> None:
                 pass
 
-            def model_dump(self) -> types.ConfigValues:
+            def model_dump(self) -> typedefs.ConfigValues:
                 return {"key": "validated"}
 
         cfg = config.UserConfig(
