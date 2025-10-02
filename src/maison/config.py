@@ -1,23 +1,36 @@
 """Module to hold the `UserConfig` class definition."""
 
-from functools import reduce
-from pathlib import Path
-from typing import Any
-from typing import Optional
-from typing import Protocol
-from typing import Union
+import pathlib
+import typing
 
-from maison.errors import NoSchemaError
-from maison.utils import _collect_configs
-from maison.utils import deep_merge
+from maison import config_parser
+from maison import config_validator as validator
+from maison import disk_filesystem
+from maison import errors
+from maison import parsers
+from maison import protocols
+from maison import service
+from maison import types
 
 
-class _IsSchema(Protocol):
-    """Protocol for config schemas."""
+def _bootstrap_service(package_name: str) -> service.ConfigService:
+    _config_parser = config_parser.ConfigParser()
 
-    def model_dump(self) -> dict[Any, Any]:
-        """Convert the validated config to a dict."""
-        ...
+    pyproject_parser = parsers.PyprojectParser(package_name=package_name)
+    toml_parser = parsers.TomlParser()
+    ini_parser = parsers.IniParser()
+
+    _config_parser.register_parser(
+        suffix=".toml", parser=pyproject_parser, stem="pyproject"
+    )
+    _config_parser.register_parser(suffix=".toml", parser=toml_parser)
+    _config_parser.register_parser(suffix=".ini", parser=ini_parser)
+
+    return service.ConfigService(
+        filesystem=disk_filesystem.DiskFilesystem(),
+        config_parser=_config_parser,
+        validator=validator.Validator(),
+    )
 
 
 class UserConfig:
@@ -26,9 +39,9 @@ class UserConfig:
     def __init__(
         self,
         package_name: str,
-        starting_path: Optional[Path] = None,
-        source_files: Optional[list[str]] = None,
-        schema: Optional[type[_IsSchema]] = None,
+        starting_path: typing.Optional[pathlib.Path] = None,
+        source_files: typing.Optional[list[str]] = None,
+        schema: typing.Optional[type[protocols.IsSchema]] = None,
         merge_configs: bool = False,
     ) -> None:
         """Initialize the config.
@@ -45,14 +58,21 @@ class UserConfig:
                 merged if multiple are found
         """
         self.source_files = source_files or ["pyproject.toml"]
+        self.starting_path = starting_path
         self.merge_configs = merge_configs
-        self._sources = _collect_configs(
-            package_name=package_name,
+        self._schema = schema
+
+        self._service = _bootstrap_service(package_name=package_name)
+
+        _sources = self._service.find_configs(
             source_files=self.source_files,
             starting_path=starting_path,
         )
-        self._schema = schema
-        self._values = self._generate_config_dict()
+
+        self._values = self._service.get_config_values(
+            config_file_paths=_sources,
+            merge_configs=merge_configs,
+        )
 
     def __str__(self) -> str:
         """Return the __str__.
@@ -63,7 +83,7 @@ class UserConfig:
         return f"<class '{self.__class__.__name__}'>"
 
     @property
-    def values(self) -> dict[str, Any]:
+    def values(self) -> types.ConfigValues:
         """Return the user's configuration values.
 
         Returns:
@@ -72,21 +92,26 @@ class UserConfig:
         return self._values
 
     @values.setter
-    def values(self, values: dict[str, Any]) -> None:
+    def values(self, values: types.ConfigValues) -> None:
         """Set the user's configuration values."""
         self._values = values
 
     @property
-    def discovered_paths(self) -> list[Path]:
+    def discovered_paths(self) -> list[pathlib.Path]:
         """Return a list of the paths to the config sources found on the filesystem.
 
         Returns:
             a list of the paths to the config sources
         """
-        return [source.filepath for source in self._sources]
+        return list(
+            self._service.find_configs(
+                source_files=self.source_files,
+                starting_path=self.starting_path,
+            )
+        )
 
     @property
-    def path(self) -> Optional[Union[Path, list[Path]]]:
+    def path(self) -> typing.Optional[typing.Union[pathlib.Path, list[pathlib.Path]]]:
         """Return the path to the selected config source.
 
         Returns:
@@ -94,7 +119,7 @@ class UserConfig:
             sources if `merge_configs` is `True`, or the path to the active config
             source if `False`
         """
-        if len(self._sources) == 0:
+        if len(self.discovered_paths) == 0:
             return None
 
         if self.merge_configs:
@@ -103,7 +128,7 @@ class UserConfig:
         return self.discovered_paths[0]
 
     @property
-    def schema(self) -> Optional[type[_IsSchema]]:
+    def schema(self) -> typing.Optional[type[protocols.IsSchema]]:
         """Return the schema.
 
         Returns:
@@ -112,15 +137,15 @@ class UserConfig:
         return self._schema
 
     @schema.setter
-    def schema(self, schema: type[_IsSchema]) -> None:
+    def schema(self, schema: type[protocols.IsSchema]) -> None:
         """Set the schema."""
         self._schema = schema
 
     def validate(
         self,
-        schema: Optional[type[_IsSchema]] = None,
+        schema: typing.Optional[type[protocols.IsSchema]] = None,
         use_schema_values: bool = True,
-    ) -> dict[str, Any]:
+    ) -> types.ConfigValues:
         """Validate the configuration.
 
         Warning:
@@ -153,32 +178,18 @@ class UserConfig:
         Raises:
             NoSchemaError: when validation is attempted but no schema has been provided
         """
-        selected_schema: Union[type[_IsSchema], None] = schema or self.schema
+        selected_schema: typing.Union[type[protocols.IsSchema], None] = (
+            schema or self.schema
+        )
 
         if not selected_schema:
-            raise NoSchemaError
+            raise errors.NoSchemaError
 
-        validated_schema = selected_schema(**self.values)
+        validated_values = self._service.validate_config(
+            values=self.values, schema=selected_schema
+        )
 
         if use_schema_values:
-            self.values = validated_schema.model_dump()
+            self.values = validated_values
 
         return self.values
-
-    def _generate_config_dict(self) -> dict[str, Any]:
-        """Generate the config dict.
-
-        If `merge_configs` is set to `False` then we use the first config. If `True`
-        then the dicts of the sources are merged from right to left.
-
-        Returns:
-            the config dict
-        """
-        if len(self._sources) == 0:
-            return {}
-
-        if not self.merge_configs:
-            return self._sources[0].to_dict()
-
-        source_dicts = (source.to_dict() for source in self._sources)
-        return reduce(lambda a, b: deep_merge(a, b), source_dicts)

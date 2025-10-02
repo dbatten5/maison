@@ -130,7 +130,8 @@ def security_python(session: Session) -> None:
     session.run("uvx", "bandit", "-r", PACKAGE_NAME, "-c", "bandit.yml", "-ll")
 
     session.log(f"Running pip-audit dependency security check with py{session.python}.")
-    session.run("uvx", "pip-audit")
+    # temporarily ignore pip vulnerability, see comment https://github.com/pypa/pip/issues/13607#issuecomment-3356778034
+    session.run("uvx", "pip-audit", "--ignore-vuln", "GHSA-4xh5-x5gv-qwph")
 
 
 @nox.session(python=PYTHON_VERSIONS, name="tests-python", tags=[TEST, PYTHON])

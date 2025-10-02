@@ -88,7 +88,7 @@ lines-after-imports = 2
 max-complexity = 10
 
 [lint.per-file-ignores]
-"__init__.py" = ["F401"]
+"__init__.py" = ["F401", "D104"]
 "tests/*" = [
     "S101",
     "D100",
@@ -96,8 +96,10 @@ max-complexity = 10
     "D102",
     "D103",
     "D104",
+    "D107",
     "D415",
     "ARG001",
+    "ARG002",
     "C408",
     "SLF001"
 ]
