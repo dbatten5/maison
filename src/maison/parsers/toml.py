@@ -22,5 +22,5 @@ class TomlParser:
         try:
             with file_path.open(mode="rb") as fd:
                 return dict(tomllib.load(fd))
-        except (FileNotFoundError, toml.TomlDecodeError):
+        except (FileNotFoundError, tomllib.TOMLDecodeError):
             return {}
