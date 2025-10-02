@@ -1,8 +1,12 @@
 """A parser for pyproject.toml files."""
 
 import pathlib
+import sys
 
-import toml
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 from maison import typedefs
 
@@ -25,7 +29,8 @@ class PyprojectParser:
     def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
-            pyproject_dict = dict(toml.load(file_path))
+            with file_path.open(mode="rb") as fd:
+                pyproject_dict = dict(tomllib.load(fd))
         except FileNotFoundError:
             return {}
         return dict(pyproject_dict.get("tool", {}).get(self._package_name, {}))

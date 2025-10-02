@@ -1,8 +1,12 @@
 """A parser for .toml files."""
 
 import pathlib
+import sys
 
-import toml
+if sys.version_info >= (3, 11):
+    import tomllib
+else:
+    import tomli as tomllib
 
 from maison import typedefs
 
@@ -16,6 +20,7 @@ class TomlParser:
     def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
-            return dict(toml.load(file_path))
+            with file_path.open(mode="rb") as fd:
+                return dict(tomllib.load(fd))
         except (FileNotFoundError, toml.TomlDecodeError):
             return {}

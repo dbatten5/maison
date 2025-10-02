@@ -6,8 +6,7 @@ from typing import Callable
 from typing import Optional
 
 import pytest
-import toml
-
+import tomli_w
 
 @pytest.fixture(name="create_tmp_file")
 def create_tmp_file_fixture(tmp_path: Path) -> Callable[..., Path]:
@@ -30,7 +29,7 @@ def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., P
         content: Optional[dict[str, Any]] = None,
     ) -> Path:
         content = content or {}
-        config_toml = toml.dumps(content)
+        config_toml = tomli_w.dumps(content)
         return create_tmp_file(content=config_toml, filename=filename)
 
     return _create_toml
