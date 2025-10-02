@@ -8,6 +8,7 @@ from typing import Optional
 import pytest
 import tomli_w
 
+
 @pytest.fixture(name="create_tmp_file")
 def create_tmp_file_fixture(tmp_path: Path) -> Callable[..., Path]:
     """Fixture for creating a temporary file."""
