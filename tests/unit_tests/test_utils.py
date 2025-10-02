@@ -2,7 +2,7 @@
 
 import pytest
 
-from maison import types
+from maison import typedefs
 from maison.utils import deep_merge
 
 
@@ -28,17 +28,17 @@ class TestDeepMerge:
     )
     def test_success(
         self,
-        a: types.ConfigValues,
-        b: types.ConfigValues,
-        expected: types.ConfigValues,
+        a: typedefs.ConfigValues,
+        b: typedefs.ConfigValues,
+        expected: typedefs.ConfigValues,
     ) -> None:
         assert deep_merge(a, b) == expected
         assert a == expected
 
     def test_incompatible_dicts(self) -> None:
         """Trying to merge incompatible dicts returns an error"""
-        dict_a: types.ConfigValues = {"1": "2", "2": "5"}
-        dict_b: types.ConfigValues = {"1": {"3": "4"}}
+        dict_a: typedefs.ConfigValues = {"1": "2", "2": "5"}
+        dict_b: typedefs.ConfigValues = {"1": {"3": "4"}}
 
         with pytest.raises(RuntimeError):
             _ = deep_merge(dict_a, dict_b)

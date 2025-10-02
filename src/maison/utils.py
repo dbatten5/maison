@@ -1,11 +1,11 @@
 """Module to hold various utils."""
 
-from maison import types
+from maison import typedefs
 
 
 def deep_merge(
-    destination: types.ConfigValues, source: types.ConfigValues
-) -> types.ConfigValues:
+    destination: typedefs.ConfigValues, source: typedefs.ConfigValues
+) -> typedefs.ConfigValues:
     """Recursively updates the destination dictionary.
 
     Usage example:

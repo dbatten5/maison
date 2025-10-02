@@ -5,7 +5,7 @@ import typing
 from collections.abc import Iterable
 
 from maison import protocols
-from maison import types
+from maison import typedefs
 from maison import utils
 
 
@@ -53,7 +53,7 @@ class ConfigService:
         self,
         config_file_paths: Iterable[pathlib.Path],
         merge_configs: bool,
-    ) -> types.ConfigValues:
+    ) -> typedefs.ConfigValues:
         """Get the values from config files.
 
         Args:
@@ -64,7 +64,7 @@ class ConfigService:
         Returns:
             The values from the config file(s)
         """
-        config_values: types.ConfigValues = {}
+        config_values: typedefs.ConfigValues = {}
 
         for path in config_file_paths:
             parsed_config = self.config_parser.parse_config(path)
@@ -76,8 +76,8 @@ class ConfigService:
         return config_values
 
     def validate_config(
-        self, values: types.ConfigValues, schema: type[protocols.IsSchema]
-    ) -> types.ConfigValues:
+        self, values: typedefs.ConfigValues, schema: type[protocols.IsSchema]
+    ) -> typedefs.ConfigValues:
         """Validate config values against a schema.
 
         Args:

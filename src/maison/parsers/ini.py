@@ -3,7 +3,7 @@
 import configparser
 import pathlib
 
-from maison import types
+from maison import typedefs
 
 
 class IniParser:
@@ -12,7 +12,7 @@ class IniParser:
     Implements the `Parser` protocol
     """
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         config = configparser.ConfigParser()
         _ = config.read(file_path)

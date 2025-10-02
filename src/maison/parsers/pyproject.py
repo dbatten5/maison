@@ -4,7 +4,7 @@ import pathlib
 
 import toml
 
-from maison import types
+from maison import typedefs
 
 
 class PyprojectParser:
@@ -22,7 +22,7 @@ class PyprojectParser:
         """
         self._package_name = package_name
 
-    def parse_config(self, file_path: pathlib.Path) -> types.ConfigValues:
+    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
             pyproject_dict = dict(toml.load(file_path))
