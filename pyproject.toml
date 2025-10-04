@@ -19,7 +19,6 @@ dependencies = [
     "loguru>=0.7.3",
     "platformdirs>=4.3.8",
     "tomli>=2.2.1 ; python_full_version < '3.11'",
-    "tomli-w>=1.2.0",
     "typer>=0.15.4",
     "typing-extensions>=4.13.2",
 ]

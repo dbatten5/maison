@@ -6,7 +6,6 @@ from typing import Callable
 from typing import Optional
 
 import pytest
-import tomli_w
 
 
 @pytest.fixture(name="create_tmp_file")
@@ -19,21 +18,6 @@ def create_tmp_file_fixture(tmp_path: Path) -> Callable[..., Path]:
         return tmp_file
 
     return _create_tmp_file
-
-
-@pytest.fixture(name="create_toml")
-def create_toml_fixture(create_tmp_file: Callable[..., Path]) -> Callable[..., Path]:
-    """Fixture for creating a `.toml` file."""
-
-    def _create_toml(
-        filename: str,
-        content: Optional[dict[str, Any]] = None,
-    ) -> Path:
-        content = content or {}
-        config_toml = tomli_w.dumps(content)
-        return create_tmp_file(content=config_toml, filename=filename)
-
-    return _create_toml
 
 
 @pytest.fixture
