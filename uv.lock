@@ -636,7 +636,7 @@ source = { editable = "." }
 dependencies = [
     { name = "loguru" },
     { name = "platformdirs" },
-    { name = "toml" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
     { name = "typer" },
     { name = "typing-extensions" },
 ]
@@ -676,7 +676,7 @@ docs = [
 requires-dist = [
     { name = "loguru", specifier = ">=0.7.3" },
     { name = "platformdirs", specifier = ">=4.3.8" },
-    { name = "toml", specifier = ">=0.10.2" },
+    { name = "tomli", marker = "python_full_version < '3.11'", specifier = ">=2.2.1" },
     { name = "typer", specifier = ">=0.15.4" },
     { name = "typing-extensions", specifier = ">=4.13.2" },
 ]
