@@ -13,14 +13,14 @@ ParserDictKey = tuple[str, typing.Union[str, None]]
 class Parser(typing.Protocol):
     """Defines the interface for a `Parser` class that's used to parse a config."""
 
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
-        """Parse a config file.
+    def parse_config(self, file: typing.BinaryIO) -> typedefs.ConfigValues:
+        """Parse a config.
 
         Args:
-            file_path: the path to the config file
+            file: the binary stream of the config file
 
         Returns:
-            the config values
+            the parsed config
         """
         ...
 
@@ -42,18 +42,22 @@ class ConfigParser:
         key = (suffix, stem)
         self._parsers[key] = parser
 
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
+    def parse_config(
+        self,
+        file_path: pathlib.Path,
+        file: typing.BinaryIO,
+    ) -> typedefs.ConfigValues:
         """See `Parser.parse_config`."""
         key: ParserDictKey
 
         # First try (suffix, stem)
         key = (file_path.suffix, file_path.stem)
         if key in self._parsers:
-            return self._parsers[key].parse_config(file_path)
+            return self._parsers[key].parse_config(file)
 
         # Then fallback to (suffix, None)
         key = (file_path.suffix, None)
         if key in self._parsers:
-            return self._parsers[key].parse_config(file_path)
+            return self._parsers[key].parse_config(file)
 
         raise errors.UnsupportedConfigError(f"No parser registered for {file_path}")

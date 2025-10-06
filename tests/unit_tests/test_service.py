@@ -1,3 +1,4 @@
+import io
 import pathlib
 import typing
 
@@ -19,7 +20,11 @@ class FakeFileSystem:
 
 
 class FakeConfigParser:
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
+    def parse_config(
+        self,
+        file_path: pathlib.Path,
+        file: typing.BinaryIO,
+    ) -> typedefs.ConfigValues:
         return {
             "values": {file_path.stem: file_path.suffix},
         }

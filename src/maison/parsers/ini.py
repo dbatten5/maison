@@ -1,7 +1,8 @@
 """A parser for .ini files."""
 
 import configparser
-import pathlib
+import io
+import typing
 
 from maison import typedefs
 
@@ -12,8 +13,12 @@ class IniParser:
     Implements the `Parser` protocol
     """
 
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
+    def parse_config(self, file: typing.BinaryIO) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         config = configparser.ConfigParser()
-        _ = config.read(file_path)
+        text_io = io.TextIOWrapper(file, encoding="utf-8")
+        try:
+            config.read_file(text_io)
+        except UnicodeDecodeError:
+            return {}
         return {section: dict(config.items(section)) for section in config.sections()}

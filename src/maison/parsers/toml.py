@@ -1,6 +1,5 @@
 """A parser for .toml files."""
 
-import pathlib
 import sys
 
 
@@ -36,11 +35,10 @@ class TomlParser:
         """
         self.section_key = section_key or ()
 
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
+    def parse_config(self, file: typing.BinaryIO) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
-            with file_path.open(mode="rb") as fd:
-                values = dict(tomllib.load(fd))
+            values = dict(tomllib.load(file))
         except (FileNotFoundError, tomllib.TOMLDecodeError):
             return {}
 
