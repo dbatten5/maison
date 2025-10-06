@@ -39,7 +39,7 @@ class TomlParser:
         """See the Parser.parse_config method."""
         try:
             values = dict(tomllib.load(file))
-        except (FileNotFoundError, tomllib.TOMLDecodeError):
+        except tomllib.TOMLDecodeError:
             return {}
 
         current = values
