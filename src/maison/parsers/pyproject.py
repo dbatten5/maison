@@ -9,11 +9,11 @@ class PyprojectParser(toml.TomlParser):
     Implements the `Parser` protocol
     """
 
-    def __init__(self, package_name: str) -> None:
+    def __init__(self, tool_name: str) -> None:
         """Initialise the pyproject reader.
 
         Args:
-            package_name: the name of the package to look for in file, e.g.
+            tool_name: the name of the package to look for in file, e.g.
                 `acme` part of `[tool.acme]`.
         """
-        super().__init__(section_key=("tool", package_name))
+        super().__init__(section_key=("tool", tool_name))

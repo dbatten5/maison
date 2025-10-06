@@ -16,7 +16,7 @@ from maison import typedefs
 def _bootstrap_service(package_name: str) -> service.ConfigService:
     _config_parser = config_parser.ConfigParser()
 
-    pyproject_parser = parsers.PyprojectParser(package_name=package_name)
+    pyproject_parser = parsers.PyprojectParser(tool_name=package_name)
     toml_parser = parsers.TomlParser()
     ini_parser = parsers.IniParser()
 
