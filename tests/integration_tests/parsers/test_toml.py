@@ -101,3 +101,27 @@ class TestParseConfig:
         result = reader.parse_config(path)
 
         assert result == {}
+
+    def test_section_key_returns_subset_of_dict(self, tmp_toml_file: FileFactory):
+        toml_content = textwrap.dedent("""
+            [tool.section]
+            key = "value"
+        """)
+        path = tmp_toml_file(toml_content)
+
+        reader = toml.TomlParser(section_key=("tool", "section"))
+        result = reader.parse_config(path)
+
+        assert result == {"key": "value"}
+
+    def test_non_existend_section_key_returns_empty_dict(self, tmp_toml_file: FileFactory):
+        toml_content = textwrap.dedent("""
+            [tool.section]
+            key = "value"
+        """)
+        path = tmp_toml_file(toml_content)
+
+        reader = toml.TomlParser(section_key=("tool", "other_section"))
+        result = reader.parse_config(path)
+
+        assert result == {}

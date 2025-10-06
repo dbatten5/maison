@@ -9,6 +9,8 @@ if sys.version_info >= (3, 11):
 else:
     import tomli as tomllib
 
+import typing
+
 from maison import typedefs
 
 
@@ -18,10 +20,35 @@ class TomlParser:
     Implements the `Parser` protocol
     """
 
+    def __init__(self, section_key: typing.Optional[tuple[str, ...]] = None) -> None:
+        """Instantiate the class.
+
+        Args:
+            section_key: an optional toml section key/identifier to search for
+                within the toml. For example if the toml file contains:
+
+                [tool.my_section]
+                my_value = true
+
+                then setting `section_key=("tool", "my_section")` will return
+                `{"my_value": True}` as the config values.
+
+        """
+        self.section_key = section_key or ()
+
     def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
         """See the Parser.parse_config method."""
         try:
             with file_path.open(mode="rb") as fd:
-                return dict(tomllib.load(fd))
+                values = dict(tomllib.load(fd))
         except (FileNotFoundError, tomllib.TOMLDecodeError):
             return {}
+
+        current = values
+        for key in self.section_key:
+            if key in current and isinstance(current[key], dict):
+                current = current[key]
+            else:
+                return {}
+
+        return current
