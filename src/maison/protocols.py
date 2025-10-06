@@ -61,11 +61,16 @@ class Filesystem(typing.Protocol):
 class ConfigParser(typing.Protocol):
     """Defines the interface for a class that parses a config."""
 
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
+    def parse_config(
+        self,
+        file_path: pathlib.Path,
+        file: typing.BinaryIO,
+    ) -> typedefs.ConfigValues:
         """Parse a config.
 
         Args:
             file_path: the path to a config file.
+            file: the binary I/O stream of the file.
 
         Returns:
             the parsed config

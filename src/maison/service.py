@@ -67,7 +67,8 @@ class ConfigService:
         config_values: typedefs.ConfigValues = {}
 
         for path in config_file_paths:
-            parsed_config = self.config_parser.parse_config(path)
+            file = self.filesystem.open_file(path=path)
+            parsed_config = self.config_parser.parse_config(file_path=path, file=file)
             config_values = utils.deep_merge(config_values, parsed_config)
 
             if not merge_configs:
