@@ -43,3 +43,15 @@ class TestGetFilePath:
         result = fs.get_file_path("ghost.ini")
 
         assert result is None
+
+
+class TestOpenFile:
+    def test_opens_file(self, tmp_path: pathlib.Path):
+        fs = disk_filesystem.DiskFilesystem()
+
+        file = tmp_path / "thing.txt"
+        _ = file.write_text("hello")
+
+        result = fs.open_file(path=file)
+
+        assert result.read() == b"hello"

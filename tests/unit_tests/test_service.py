@@ -14,6 +14,9 @@ class FakeFileSystem:
             return None
         return pathlib.Path(f"/path/to/{file_name}")
 
+    def open_file(self, path: pathlib.Path, mode: str = "rb") -> typing.BinaryIO:
+        return io.BytesIO(b"file")
+
 
 class FakeConfigParser:
     def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:

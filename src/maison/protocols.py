@@ -44,6 +44,18 @@ class Filesystem(typing.Protocol):
         Returns:
             The `Path` to the file if it exists or `None` if it doesn't
         """
+        ...
+
+    def open_file(self, path: pathlib.Path) -> typing.BinaryIO:
+        """Open a file.
+
+        Args:
+            path: the path to the file
+
+        Returns:
+            the opened file as a binary I/O stream
+        """
+        ...
 
 
 class ConfigParser(typing.Protocol):

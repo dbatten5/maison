@@ -55,3 +55,7 @@ class DiskFilesystem:
                 return path / file_name
 
         return None
+
+    def open_file(self, path: pathlib.Path) -> typing.BinaryIO:
+        """See `Filesystem.open_file`."""
+        return path.open(mode="rb")
