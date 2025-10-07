@@ -1,6 +1,6 @@
 [project]
 name = "maison"
-version = "2.0.0"
+version = "2.0.1"
 description = "Read settings from config files"
 authors = [
     { name = "Dom Batten", email = "dominic.batten@googlemail.com" },
