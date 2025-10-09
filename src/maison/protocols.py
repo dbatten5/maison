@@ -6,21 +6,6 @@ import typing
 from maison import typedefs
 
 
-class Parser(typing.Protocol):
-    """Defines the interface for a parser used to parse a config file."""
-
-    def parse_config(self, file_path: pathlib.Path) -> typedefs.ConfigValues:
-        """Parses a config file.
-
-        Args:
-            file_path: the path to the config file
-
-        Returns:
-            the parsed config values
-        """
-        ...
-
-
 class IsSchema(typing.Protocol):
     """Protocol for config schemas."""
 
