@@ -1,8 +1,8 @@
 ## v2.0.2 (2025-10-09)
 
-* Removes `toml` dependency as it's unmaintained and doesn't support TOML 1.0
-symtax. Replaced with `tomli`.
-* Major refactor of the package to improve separation of concerns, testability,
+- Removes `toml` dependency as it's unmaintained and doesn't support TOML 1.0
+  symtax. Replaced with `tomli`.
+- Major refactor of the package to improve separation of concerns, testability,
   and maintainability.
 
 ## v2.0.0 (2024-08-19)
