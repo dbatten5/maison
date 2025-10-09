@@ -176,7 +176,7 @@ def docs_build(session: Session) -> None:
 
 @nox.session(python=DEFAULT_PYTHON_VERSION, name="docs", tags=[DOCS, BUILD])
 def docs(session: Session) -> None:
-    """Build the project documentation (Sphinx)."""
+    """Build and serve the project documentation (Sphinx)."""
     session.log("Installing documentation dependencies...")
     session.install("-e", ".", "--group", "docs")
 

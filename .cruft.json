@@ -1,0 +1,27 @@
+{
+  "template": "https://github.com/56kyle/cookiecutter-robust-python.git",
+  "commit": "bf289288fe0cacd836ebd606dbb657193c34340f",
+  "checkout": null,
+  "context": {
+    "cookiecutter": {
+      "project_name": "maison",
+      "package_name": "maison",
+      "friendly_name": "Maison",
+      "min_python_version": "3.9",
+      "max_python_version": "3.13",
+      "add_rust_extension": false,
+      "author": "Dom Batten",
+      "email": "dominic.batten@googlemail.com",
+      "repository_provider": "github",
+      "repository_host": "github.com",
+      "repository_path": "dbatten/maison",
+      "version": "2.0.1",
+      "copyright_year": "2025",
+      "license": "MIT",
+      "development_status": "Development Status :: 5 - Production/Stable",
+      "_template": "https://github.com/56kyle/cookiecutter-robust-python.git",
+      "_commit": "bf289288fe0cacd836ebd606dbb657193c34340f"
+    }
+  },
+  "directory": null
+}
