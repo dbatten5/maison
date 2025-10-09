@@ -89,7 +89,7 @@ def create_release_branch(new_version: str) -> None:
     """Creates a release branch."""
     commands: list[list[str]] = [
         ["git", "status", "--porcelain"],
-        ["git", "checkout", "-b", f"release/{new_version}", "develop"],
+        ["git", "checkout", "-b", f"release/{new_version}", "main"],
     ]
     for command in commands:
         subprocess.run(command, cwd=REPO_FOLDER, capture_output=True, check=True)

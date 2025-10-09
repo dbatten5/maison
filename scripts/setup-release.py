@@ -38,7 +38,7 @@ def get_parser() -> argparse.ArgumentParser:
 def setup_release(increment: Optional[str] = None) -> None:
     """Prepares a release of the maison package.
 
-    Sets up a release branch from the branch develop, bumps the version, and creates a release commit. Does not tag the
+    Sets up a release branch from the main branch, bumps the version, and creates a release commit. Does not tag the
     release or push any changes.
     """
     check_dependencies(path=REPO_FOLDER, dependencies=["git"])
